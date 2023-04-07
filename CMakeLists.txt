@@ -9,7 +9,7 @@ find_package(SDL2 REQUIRED)
 MESSAGE(STATUS "SDL Version found: ${SDL2_VERSION}")
 
 add_executable(${PROJECT_NAME}
-	main.cpp
+	src/main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
