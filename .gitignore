@@ -4,5 +4,11 @@ build/
 # Language Server Information (ccls)
 .ccls-cache/
 
-# External Libraries
-lib/
+
+###### Jetbrains specific ignore folders below #######
+
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/shelf
