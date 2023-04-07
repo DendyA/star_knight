@@ -10,19 +10,19 @@ int main( int argc, char* args[] )
 
     int exitCondition = EXIT_SUCCESS;
 
-	SDL_Window* window = NULL;
-	SDL_Surface* screenSurface = NULL;
+	SDL_Window* window;
+	SDL_Surface* screenSurface;
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-        std::cout << "SDL was unable to initalize! SDL Error: " << SDL_GetError() << std::endl;
+        std::cout << "SDL was unable to initialize! SDL Error: " << SDL_GetError() << std::endl;
         exitCondition = EXIT_FAILURE;
 	}
 	else
 	{
 		window = SDL_CreateWindow("Star Knight", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
 
-		if(window == NULL)
+		if(!window)
 		{
             std::cout << "Window was unable to be created! SDL Error: " << SDL_GetError() << std::endl;
             exitCondition = EXIT_FAILURE;
@@ -32,7 +32,7 @@ int main( int argc, char* args[] )
 			screenSurface = SDL_GetWindowSurface(window);
 
 			// Fills a rectangle, drawn on the screen surface, and fills it all white.
-			SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
+			SDL_FillRect(screenSurface, nullptr, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
 
 			SDL_UpdateWindowSurface(window);
 
