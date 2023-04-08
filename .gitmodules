@@ -2,3 +2,7 @@
 	path = lib/SDL2
 	url = https://github.com/libsdl-org/SDL.git
 	branch = release-2.26.x
+[submodule "lib/bgfx_cmake"]
+	path = lib/bgfx_cmake
+	url = github.com:DendyA/bgfx.cmake.git
+	branch = master
