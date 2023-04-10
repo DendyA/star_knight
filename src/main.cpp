@@ -3,6 +3,9 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_syswm.h"
 
+#include "bgfx/bgfx.h"
+#include "bgfx/platform.h"
+
 /*** Initialize SDL and its various subsystems.
  * Specifically used to initialize the SDL system and the necessary subsystems (audio, video, etc.).
  * @return Status of function call. 0 if successful, 1 if failure.
@@ -62,6 +65,73 @@ void destroySDL(SDL_Window* pwindow)
     SDL_Quit();
 }
 
+/** Initializes various bgfx objects.
+ * Initializes various bgfx objects like PlatformData, retrieves window information from SDL,
+ * and initializes the bgfx system as a whole etc.
+ * @param pwindow Pointer to the window bgfx is to render in.
+ * @return Status of the function call. 0 if successful, 1 if failure.
+ */
+int initbgfx(SDL_Window* pwindow)
+{
+    int exitCondition = EXIT_SUCCESS;
+
+    SDL_SysWMinfo windowManagementInfo;
+    SDL_VERSION(&windowManagementInfo.version);
+
+    if(SDL_GetWindowWMInfo(pwindow, &windowManagementInfo) == SDL_FALSE)
+    {
+        std::cerr << "Unable to get window management information: " << SDL_GetError() << std::endl;
+        exitCondition = EXIT_FAILURE;
+        return exitCondition;
+    }
+
+//    TODO(DendyA): Make the following logic platform-agnostic, currently only works with Ubuntu.
+    bgfx::PlatformData platformData;
+
+    platformData.ndt = windowManagementInfo.info.x11.display;
+    platformData.nwh = (void*)(uintptr_t)windowManagementInfo.info.x11.window; // FIXME(DendyA): Do I need to do the double conversion here?
+
+    bgfx::setPlatformData(platformData);
+
+    bgfx::renderFrame();
+
+    if(!bgfx::init())
+    {
+        std::cerr << "Unable to initialize bgfx!" << std::endl;
+        exitCondition = EXIT_FAILURE;
+    }
+
+    return exitCondition;
+}
+
+/*** Initializes bgfx view objects.
+ * Specifically used to set debug flags, reset the backbuffer size, and inits view objects among other things.
+ */
+void initbgfxView()
+{
+    // Consts to reset screen size. TODO(DendyA): These need to be kept in a more globally accessible location.
+    const uint32_t SCREEN_WIDTH = 1280u;
+    const uint32_t SCREEN_HEIGHT = 1024u;
+
+    bgfx::reset(SCREEN_WIDTH, SCREEN_HEIGHT, BGFX_RESET_VSYNC);
+
+    bgfx::setDebug(BGFX_DEBUG_TEXT);
+
+    bgfx::setViewRect(0, 0, 0, (uint16_t)SCREEN_WIDTH, (uint16_t)SCREEN_HEIGHT);
+
+    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
+
+    bgfx::touch(0);
+}
+
+/** Destroys the bgfx system as a whole.
+ *  Destroys the bgfx system as a whole. bgfx MUST be initialized before shutdown is called. Otherwise a fatal error occurs.
+ */
+void destroybgfx()
+{
+    bgfx::shutdown();
+}
+
 int main(int argc, char* args[])
 {
     int exitCondition = EXIT_SUCCESS;
@@ -84,6 +154,17 @@ int main(int argc, char* args[])
         return exitCondition;
     }
 
+    exitCondition = initbgfx(window);
+
+    if(exitCondition != EXIT_SUCCESS)
+    {
+        destroybgfx(); //FIXME(DendyA): This throws an error if bgfx is attempted to be destroyed when not initialized.
+        destroySDL(window);
+        return exitCondition;
+    }
+
+    initbgfxView();
+
     SDL_Event currEvent;
     bool quit = false;
 
@@ -95,9 +176,12 @@ int main(int argc, char* args[])
             {
                 quit = true;
             }
+//            FIXME(DendyA): Perhaps because nothing is rendered, but having this here causes the program to crash.
+//            bgfx::frame();
         }
     }
 
+    destroybgfx();
     destroySDL(window);
 	return exitCondition;
 }
