@@ -27,10 +27,10 @@ int initSDL()
 /*** Initialize and create the SDL_Window object.
  * Used to initialize the main SDL_Window object and store it in the passed in pointer.
  * @todo Parameterize the various window creation parameters. (x, y, size, title, and flags).
- * @param pwindow Pointer to hold the newly created window.
+ * @param pwindow A reference to a pointer to hold the newly created window.
  * @return Status of function call. 0 if successful, 1 if failure.
  */
-int initSDLWindow(SDL_Window* pwindow)
+int initSDLWindow(SDL_Window*& pwindow)
 {
     // Consts to init screen size.
     const int SCREEN_WIDTH = 1280;
@@ -66,7 +66,7 @@ void destroySDL(SDL_Window* pwindow)
 }
 
 /** Initializes various bgfx objects.
- * Initializes various bgfx objects like PlatformData, retrieves window information from SDL,
+ * Initializes various bgfx objects like the Init struct, retrieves window information from SDL,
  * and initializes the bgfx system as a whole etc.
  * @param pwindow Pointer to the window bgfx is to render in.
  * @return Status of the function call. 0 if successful, 1 if failure.
@@ -85,17 +85,20 @@ int initbgfx(SDL_Window* pwindow)
         return exitCondition;
     }
 
-//    TODO(DendyA): Make the following logic platform-agnostic, currently only works with Ubuntu.
-    bgfx::PlatformData platformData;
+    bgfx::Init initData;
 
-    platformData.ndt = windowManagementInfo.info.x11.display;
-    platformData.nwh = (void*)(uintptr_t)windowManagementInfo.info.x11.window; // FIXME(DendyA): Do I need to do the double conversion here?
+//    FIXME(DendyA): Technically, these two are also platform-specific. Need to make them platform-agnostic in the future.
+    initData.type = bgfx::RendererType::OpenGL;
+    initData.vendorId = BGFX_PCI_ID_NVIDIA;
 
-    bgfx::setPlatformData(platformData);
+//    FIXME(DendyA): Technically this is platform-specific. Make it platform-agnostic in the future.
+//      In particular, if Ubuntu uses Wayland, this will (obviously) crash given that X isn't being used.
+    initData.platformData.ndt = windowManagementInfo.info.x11.display;
+    initData.platformData.nwh = (void*)(uintptr_t)windowManagementInfo.info.x11.window;
 
-    bgfx::renderFrame();
+    bgfx::renderFrame(); // This makes the program run in single threaded mode. Removing this call makes it multithreaded.
 
-    if(!bgfx::init())
+    if(!bgfx::init(initData))
     {
         std::cerr << "Unable to initialize bgfx!" << std::endl;
         exitCondition = EXIT_FAILURE;
@@ -176,8 +179,8 @@ int main(int argc, char* args[])
             {
                 quit = true;
             }
-//            FIXME(DendyA): Perhaps because nothing is rendered, but having this here causes the program to crash.
-//            bgfx::frame();
+
+            bgfx::frame();
         }
     }
 
