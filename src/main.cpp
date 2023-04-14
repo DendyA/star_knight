@@ -161,7 +161,8 @@ int main(int argc, char* args[])
 
     if(exitCondition != EXIT_SUCCESS)
     {
-        destroybgfx(); //FIXME(DendyA): This throws an error if bgfx is attempted to be destroyed when not initialized.
+//      This does not destroy bgfx here because neither of the failure paths in the initbgfx function will result in
+//      a successful initialization of bgfx. And bgfx errors-out if it is attempted to be destroyed while uninitialized.
         destroySDL(window);
         return exitCondition;
     }
