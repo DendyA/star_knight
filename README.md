@@ -3,17 +3,29 @@ Star Knight - A game dev project.
 
 ## Dependencies & Development Environment
 
-The project is developed using Ubuntu 22.04. The build system uses CMake which can be installed the following way.
+The project is developed using Ubuntu 22.04. The ```build-essential``` package is needed. This can be installed the following way.
+
+```sh
+sudo apt install build-essential
+```
+
+The build system uses CMake which can be installed the following way.
 
 ```sh
 sudo apt install cmake
+```
+
+The version control system used is Git. This does not come pre-installed on new Ubuntu 22.04 installs. Therefore, to install it the following command can be used.
+
+```sh
+sudo apt install git
 ```
 
 ### SDL
 
 #### SDL Dependencies
 Before SDL is to be built, the following apt packages are needed.
-```shell
+```sh
 sudo apt install libglu1-mesa-dev freeglut3-dev mesa-common-dev
 ```
 
@@ -25,7 +37,7 @@ The project requires [SDL](https://www.libsdl.org/) which is used for user input
 #### bgfx Dependencies
 Before bgfx is to be built (more information [here](https://bkaradzic.github.io/bgfx/build.html)), the following apt packages are needed.
 
-```shell
+```sh
 sudo apt install libgl1-mesa-dev x11proto-core-dev libx11-dev
 ```
 
@@ -37,7 +49,7 @@ The project requires [bgfx](https://bkaradzic.github.io/bgfx/overview.html) and 
 - C++ STL: C++17
 - CMake: 3.22.1
 - SDL: 2.26.4
-- bgfx_cmake: f8ea763
+- bgfx_cmake: 35710ae
 - bgfx: c3e3053
 - bimg: c3b3c6b
 - bx: 4e67e34
