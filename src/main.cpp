@@ -4,8 +4,8 @@
 
 #include <iostream>
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_syswm.h"
+#include "SDL.h"
+#include "SDL_syswm.h"
 
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
