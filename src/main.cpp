@@ -1,3 +1,7 @@
+//
+// Created by DendyA on 26/03/23.
+//
+
 #include <iostream>
 
 #include "SDL2/SDL.h"
