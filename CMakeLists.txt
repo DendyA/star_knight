@@ -1,3 +1,6 @@
+# Created on: 26/03/23.
+# Author: DendyA
+
 CMAKE_MINIMUM_REQUIRED(VERSION 3.22)
 
 PROJECT(star_knight)

@@ -1,6 +1,5 @@
-//
-// Created by DendyA on 26/03/23.
-//
+// Created on: 26/03/23
+// Author: DendyA
 
 #include <iostream>
 
