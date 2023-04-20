@@ -12,13 +12,22 @@ ADD_SUBDIRECTORY(fragment)
 ADD_SUBDIRECTORY(vertex)
 
 # Append the shader manager class source file.
-LIST(APPEND sk_shader_lib
+LIST(APPEND sk_shader_lib_srcs
     shader_manager.cpp
+)
+
+LIST(APPEND sk_shader_lib_hdrs
+    shader_manager.h
 )
 
 # Make a shader CMake library.
 ADD_LIBRARY(${PROJECT_NAME}
-    ${sk_shader_lib}
+    ${sk_shader_lib_srcs}
+    ${sk_shader_lib_headers}
+)
+
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
+    ${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bgfx/include/bgfx/
 )
 
 # Add the two custom targets for compiling the shaders.
