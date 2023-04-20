@@ -4,6 +4,7 @@
   <component name="CidrRootsConfiguration">
     <excludeRoots>
       <file path="$PROJECT_DIR$/.ccls-cache" />
+      <file path="$PROJECT_DIR$/compiled_shaders" />
     </excludeRoots>
   </component>
 </project>
