@@ -1,6 +1,9 @@
 # Build Folder
 build/
 
+# Compiled Shader Folder
+compiled_shaders/
+
 # Language Server Information (ccls)
 .ccls-cache/
 
