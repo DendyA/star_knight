@@ -8,6 +8,30 @@
 
 #include "shader_manager.h"
 
+// TODO(DendyA): This should be put elsewhere and included in this class.
+struct PosColorVertex
+{
+//  Position data
+    float m_x;
+    float m_y;
+    float m_z;
+
+    uint32_t m_abgr; // Colour value
+
+    static void init()
+    {
+        ms_decl
+                .begin()
+                .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+                .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+                .end();
+    };
+
+    static bgfx::VertexLayout ms_decl;
+};
+
+bgfx::VertexLayout PosColorVertex::ms_decl;
+
 bgfx::ShaderHandle
 ShaderManager::loadShader(const std::string& shaderName)
 {
@@ -18,7 +42,7 @@ ShaderManager::loadShader(const std::string& shaderName)
 
 //    TODO(DendyA): This needs to be tested. Especially the pointer to the shaderData passed into copy().
     const std::string shaderData = readBuffer.str();
-    const bgfx::Memory* shaderMem = bgfx::copy(&shaderData, shaderData.size());
+    const bgfx::Memory* shaderMem = bgfx::copy(shaderData.c_str(), shaderData.size());
 
     bgfx::ShaderHandle handle = bgfx::createShader(shaderMem);
     // TODO(DendyA): According to the documentation, the third parameter being INT32_MAX (default) means it expects the string to be null terminated.
