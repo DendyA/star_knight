@@ -3,11 +3,17 @@
 
 #include <iostream>
 
+// IMPORTANT: This MUST be included before SDL_syswm.h since in that header None is defined as 0L which breaks bx/math.h
+// Moving it here, bx/math.h defines the None tag instead and SDL_syswm.h has an ifndef guard to check if None is not defined.
+#include "bx/math.h"
+
 #include "SDL.h"
 #include "SDL_syswm.h"
 
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
+
+#include "shaders/shader_manager.h"
 
 /*** Initialize SDL and its various subsystems.
  * Specifically used to initialize the SDL system and the necessary subsystems (audio, video, etc.).
@@ -140,6 +146,10 @@ void destroybgfx()
 
 int main(int argc, char* args[])
 {
+    // Consts to set view and projection matrix. TODO(DendyA): These need to be kept in a more globally accessible location.
+    const uint32_t SCREEN_WIDTH = 1280u;
+    const uint32_t SCREEN_HEIGHT = 1024u;
+
     int exitCondition = EXIT_SUCCESS;
 
     SDL_Window* window;
@@ -172,6 +182,11 @@ int main(int argc, char* args[])
 
     initbgfxView();
 
+    bgfx::VertexBufferHandle vertexBufferHandle = ShaderManager::initVertexBuffer();
+    bgfx::IndexBufferHandle indexBufferHandle = ShaderManager::initIndexBuffer();
+    bgfx::ProgramHandle programHandle = ShaderManager::generateProgram("../compiled_shaders/vertex/vs_simple.bin",
+                                                                       "../compiled_shaders/fragment/fs_simple.bin");
+
     SDL_Event currEvent;
     bool quit = false;
 
@@ -183,6 +198,51 @@ int main(int argc, char* args[])
             {
                 quit = true;
             }
+
+            const bx::Vec3 at  = { 0.0f, 0.0f,   0.0f };
+            const bx::Vec3 eye = { 0.0f, 0.0f, 10.0f };
+
+//             Set view and projection matrix for view 0.
+            float view[16];
+            bx::mtxLookAt(view, eye, at);
+
+            float proj[16];
+            bx::mtxProj(proj,
+                        60.0f,
+                        float(SCREEN_WIDTH)/float(SCREEN_HEIGHT),
+                        0.1f, 100.0f,
+                        bgfx::getCaps()->homogeneousDepth);
+
+            bgfx::setViewTransform(0, view, proj);
+
+            // Set view 0 default viewport.
+            bgfx::setViewRect(0, 0, 0,
+                              SCREEN_WIDTH,
+                              SCREEN_HEIGHT);
+
+            bgfx::touch(0);
+
+
+            float mtx[16];
+            bx::mtxRotateY(mtx, 0.0f);
+
+            // position x,y,z
+            mtx[12] = 0.0f;
+            mtx[13] = 0.0f;
+            mtx[14] = 0.0f;
+
+            // Set model matrix for rendering.
+            bgfx::setTransform(mtx);
+
+            // Set vertex and index buffer.
+            bgfx::setVertexBuffer(0, vertexBufferHandle);
+            bgfx::setIndexBuffer(indexBufferHandle);
+
+            // Set render states.
+            bgfx::setState(BGFX_STATE_DEFAULT);
+
+            // Submit primitive for rendering to view 0.
+            bgfx::submit(0, programHandle);
 
             bgfx::frame();
         }
