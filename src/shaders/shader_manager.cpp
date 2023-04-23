@@ -60,6 +60,9 @@ ShaderManager::generateProgram(const std::string& vertexShaderName, const std::s
 
     bgfx::ProgramHandle program = bgfx::createProgram(vertexShaderHandle, fragmentShaderHandle, true);
 
+    bgfx::destroy(vertexShaderHandle);
+    bgfx::destroy(fragmentShaderHandle);
+
     return program;
 }
 
