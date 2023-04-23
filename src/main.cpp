@@ -248,6 +248,10 @@ int main(int argc, char* args[])
         }
     }
 
+    bgfx::destroy(vertexBufferHandle);
+    bgfx::destroy(indexBufferHandle);
+    bgfx::destroy(programHandle);
+
     destroybgfx();
     destroySDL(window);
 	return exitCondition;
