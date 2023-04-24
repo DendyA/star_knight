@@ -32,6 +32,9 @@ struct PosColorVertex
 
 bgfx::VertexLayout PosColorVertex::ms_decl;
 
+// TODO(DendyA): The current value of shaderName is the full path to the file on disk.
+//      In future revisions, this should just be the name of the file not the full path.
+//      The full path should probably be defined in this class and then pre-pended to the filename.
 bgfx::ShaderHandle
 ShaderManager::loadShader(const std::string& shaderName)
 {
@@ -69,6 +72,7 @@ ShaderManager::generateProgram(const std::string& vertexShaderName, const std::s
 bgfx::VertexBufferHandle
 ShaderManager::initVertexBuffer()
 {
+//    TODO(DendyA): This needs to be removed in future revisions of the code. Should be read-in from a file and then passed-in here.
     static PosColorVertex s_cubeVertices[] =
     {
     {  0.5f,  0.5f, 0.0f, 0xff0000ff },
@@ -88,6 +92,7 @@ ShaderManager::initVertexBuffer()
 bgfx::IndexBufferHandle
 ShaderManager::initIndexBuffer()
 {
+//    TODO(DendyA): This needs to be removed in future revisions of the code. Should be read-in from a file and then passed-in here.
     static const uint16_t s_cubeTriList[] =
     {
             0,1,3,
