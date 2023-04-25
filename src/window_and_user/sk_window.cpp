@@ -10,7 +10,7 @@ namespace star_knight
 {
     star_knight::SKWindow::SKWindow()
     {
-        m_isError = 0;
+        m_errorCode = kNoErr;
         m_pwindow = nullptr;
         m_errorMessage = "";
 
@@ -28,10 +28,10 @@ namespace star_knight
         return m_pwindow;
     }
 
-    int
-    SKWindow::getIsError()
+    star_knight::SKWindow::SKWindowErrCodes
+    SKWindow::getErrorCode()
     {
-        return m_isError;
+        return m_errorCode;
     }
 
     std::string
@@ -51,7 +51,7 @@ namespace star_knight
 
         if(SDL_Init(initFlags) < 0)
         {
-            saveError("Window was unable to be created!\n");
+            saveError("Window was unable to be created!\n", kSDLInitErr);
         }
     }
 
@@ -72,7 +72,7 @@ namespace star_knight
 
         if(!m_pwindow)
         {
-            saveError("Window was unable to be created!\n");
+            saveError("Window was unable to be created!\n", kSDLWinCreateErr);
         }
     }
 
@@ -94,14 +94,14 @@ namespace star_knight
     }
 
     /*** Saves error status and message.
-     * If any of the functions in this class encounter an error, this is called to set the specific message and the isError flag.
+     * If any of the functions in this class encounter an error, this is called to set the specific message and the isError var.
      * @param prependedToError String to prepend to the SDL error message. Expected to be \n and null-terminated.
      */
     void
-    star_knight::SKWindow::saveError(const std::string& prependedToError)
+    star_knight::SKWindow::saveError(const std::string& prependedToError, SKWindowErrCodes errorCode)
     {
         // String initialization since SDL_GetError() returns a char*
         m_errorMessage = prependedToError + "SDL Error: " + std::string(SDL_GetError());
-        m_isError = EXIT_FAILURE;
+        m_errorCode = errorCode;
     }
 } // star_knight

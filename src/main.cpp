@@ -100,19 +100,19 @@ int main(int argc, char* args[])
     star_knight::SKWindow skWindow = star_knight::SKWindow();
 
 //    This errors-out and returns immediately since there is not a ton to be done if SDL can't initialize.
-    if(skWindow.getIsError())
+    if(skWindow.getErrorCode() != star_knight::SKWindow::SKWindowErrCodes::kNoErr)
     {
         std::cerr << skWindow.getErrorMessage() << std::endl;
-        return skWindow.getIsError();
+        return skWindow.getErrorCode(); // Since the skWindowErrCodes enum is type defined as an int, this is valid.
     }
 
     skWindow.initSDLWindow();
 
-//    This errors-out and returns immediately since have a window fail to initialize means no game to display.
-    if(skWindow.getIsError())
+//    This errors-out and returns immediately since having a window fail to initialize means no game to display.
+    if(skWindow.getErrorCode() != star_knight::SKWindow::SKWindowErrCodes::kNoErr)
     {
         std::cerr << skWindow.getErrorMessage() << std::endl;
-        return skWindow.getIsError();
+        return skWindow.getErrorCode(); // Since the skWindowErrCodes enum is type defined as an int, this is valid.
     }
 
     exitCondition = initbgfx(skWindow.getpwindow());
