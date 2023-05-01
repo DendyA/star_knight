@@ -1,6 +1,5 @@
 // Created on: 24/04/23.
 // Author: DendyA
-//
 
 #ifndef STAR_KNIGHT_WINDOW_AND_INPUT_H
 #define STAR_KNIGHT_WINDOW_AND_INPUT_H
