@@ -39,10 +39,6 @@ namespace star_knight
         return m_errorMessage;
     }
 
-    /*** Initialize SDL and its various subsystems.
-     * Specifically used to initialize the SDL system and the necessary subsystems (audio, video, etc.).
-     * @return Status of function call. 0 if successful, 1 if failure.
-     */
     void
     star_knight::SKWindow::initSDL()
     {
@@ -54,16 +50,10 @@ namespace star_knight
         }
     }
 
-    /*** Initialize and create the SDL_Window object.
-     * Used to initialize the main SDL_Window object and store it in the passed in pointer.
-     * @todo Parameterize the various window creation parameters. (x, y, size, title, and flags).
-     * @param pwindow A reference to a pointer to hold the newly created window.
-     * @return Status of function call. 0 if successful, 1 if failure.
-     */
     void
     star_knight::SKWindow::initSDLWindow()
     {
-        // Consts to init screen size.
+        // Consts to init screen size. // TODO(DendyA): Move to a more globally accessible location.
         const int SCREEN_WIDTH = 1280;
         const int SCREEN_HEIGHT = 1024;
 
@@ -75,10 +65,6 @@ namespace star_knight
         }
     }
 
-    /*** Used to destroy various SDL objects and the SDL system as a whole.
-     * Destroys various SDL objects (SDL_Window if not NULL) and the SDL system and its subsystems (video, audio, etc.).
-     * @param pwindow Window to be destructed if not NULL.
-     */
     void
     star_knight::SKWindow::destroySDL()
     {
@@ -92,10 +78,6 @@ namespace star_knight
         SDL_Quit();
     }
 
-    /*** Saves error status and message.
-     * If any of the functions in this class encounter an error, this is called to set the specific message and the isError var.
-     * @param prependedToError String to prepend to the SDL error message. Expected to be \n and null-terminated.
-     */
     void
     star_knight::SKWindow::saveError(const std::string& prependedToError, SKWindowErrCodes errorCode)
     {
