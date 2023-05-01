@@ -7,86 +7,9 @@
 // Moving it here, bx/math.h defines the None tag instead and SDL_syswm.h has an ifndef guard to check if None is not defined.
 #include "bx/math.h"
 
-#include "SDL_syswm.h"
-
-#include "bgfx/bgfx.h"
-#include "bgfx/platform.h"
-
-
 #include "window_and_user/sk_window.h"
+#include "renderer/initializer.h"
 #include "shaders/shader_manager.h"
-
-
-
-/** Initializes various bgfx objects.
- * Initializes various bgfx objects like the Init struct, retrieves window information from SDL,
- * and initializes the bgfx system as a whole etc.
- * @param pwindow Pointer to the window bgfx is to render in.
- * @return Status of the function call. 0 if successful, 1 if failure.
- */
-int initbgfx(SDL_Window* pwindow)
-{
-    int exitCondition = EXIT_SUCCESS;
-
-    SDL_SysWMinfo windowManagementInfo;
-    SDL_VERSION(&windowManagementInfo.version);
-
-    if(SDL_GetWindowWMInfo(pwindow, &windowManagementInfo) == SDL_FALSE)
-    {
-        std::cerr << "Unable to get window management information: " << SDL_GetError() << std::endl;
-        exitCondition = EXIT_FAILURE;
-        return exitCondition;
-    }
-
-    bgfx::Init initData;
-
-//    FIXME(DendyA): Technically, these two are also platform-specific. Need to make them platform-agnostic in the future.
-    initData.type = bgfx::RendererType::OpenGL;
-    initData.vendorId = BGFX_PCI_ID_NVIDIA;
-
-//    FIXME(DendyA): Technically this is platform-specific. Make it platform-agnostic in the future.
-//      In particular, if Ubuntu uses Wayland, this will (obviously) crash given that X isn't being used.
-    initData.platformData.ndt = windowManagementInfo.info.x11.display;
-    initData.platformData.nwh = (void*)(uintptr_t)windowManagementInfo.info.x11.window;
-
-    bgfx::renderFrame(); // This makes the program run in single threaded mode. Removing this call makes it multithreaded.
-
-    if(!bgfx::init(initData))
-    {
-        std::cerr << "Unable to initialize bgfx!" << std::endl;
-        exitCondition = EXIT_FAILURE;
-    }
-
-    return exitCondition;
-}
-
-/*** Initializes bgfx view objects.
- * Specifically used to set debug flags, reset the backbuffer size, and inits view objects among other things.
- */
-void initbgfxView()
-{
-    // Consts to reset screen size. TODO(DendyA): These need to be kept in a more globally accessible location.
-    const uint32_t SCREEN_WIDTH = 1280u;
-    const uint32_t SCREEN_HEIGHT = 1024u;
-
-    bgfx::reset(SCREEN_WIDTH, SCREEN_HEIGHT, BGFX_RESET_VSYNC);
-
-    bgfx::setDebug(BGFX_DEBUG_TEXT);
-
-    bgfx::setViewRect(0, 0, 0, (uint16_t)SCREEN_WIDTH, (uint16_t)SCREEN_HEIGHT);
-
-    bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
-
-    bgfx::touch(0);
-}
-
-/** Destroys the bgfx system as a whole.
- *  Destroys the bgfx system as a whole. bgfx MUST be initialized before shutdown is called. Otherwise a fatal error occurs.
- */
-void destroybgfx()
-{
-    bgfx::shutdown();
-}
 
 int main(int argc, char* args[])
 {
@@ -115,17 +38,23 @@ int main(int argc, char* args[])
         return skWindow.getErrorCode(); // Since the skWindowErrCodes enum is type defined as an int, this is valid.
     }
 
-    exitCondition = initbgfx(skWindow.getpwindow());
+    star_knight::Initializer bgfxInitalizer = star_knight::Initializer(skWindow.getpwindow());
 
 //    This errors-out and returns immediately since having no bgfx corresponds to the inability to display graphics.
-    if(exitCondition != EXIT_SUCCESS)
+    if(bgfxInitalizer.getErrorCode() != star_knight::Initializer::SKRendererInitErrCodes::kNoErr)
     {
-//      This does not destroy bgfx here because neither of the failure paths in the initbgfx function will result in
-//      a successful initialization of bgfx. And bgfx errors-out if it is attempted to be destroyed while uninitialized.
-        return exitCondition;
+        std::cerr << bgfxInitalizer.getErrorMessage() << std::endl;
+
+        if(bgfxInitalizer.getErrorCode() != star_knight::Initializer::SKRendererInitErrCodes::kbgfxInitErr)
+        {
+            // Only destory bgfx if bgfx was successfully initialized. If it wasn't, attempting to destroy it will cause a fatal error.
+            bgfxInitalizer.destroybgfx();
+        }
+
+        return bgfxInitalizer.getErrorCode();
     }
 
-    initbgfxView();
+    bgfxInitalizer.initbgfxView();
 
     bgfx::VertexBufferHandle vertexBufferHandle = ShaderManager::initVertexBuffer();
     bgfx::IndexBufferHandle indexBufferHandle = ShaderManager::initIndexBuffer();
@@ -197,7 +126,7 @@ int main(int argc, char* args[])
     bgfx::destroy(indexBufferHandle);
     bgfx::destroy(programHandle);
 
-    destroybgfx();
+    bgfxInitalizer.destroybgfx();
 
 	return exitCondition;
 }
