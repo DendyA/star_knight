@@ -4,6 +4,8 @@
 #ifndef STAR_KNIGHT_SHADER_MANAGER_H
 #define STAR_KNIGHT_SHADER_MANAGER_H
 
+#include "bgfx.h"
+
 class ShaderManager
 {
     public:

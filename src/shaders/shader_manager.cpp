@@ -4,8 +4,6 @@
 #include <fstream>
 #include <sstream>
 
-#include "bgfx.h"
-
 #include "shader_manager.h"
 
 // TODO(DendyA): This should be put elsewhere and included in this class.
