@@ -37,13 +37,13 @@ namespace star_knight
             */
             ~Initializer();
 
-            /*** Returns the value stored in @refitem m_errorCode.
+            /*** Returns the value stored in m_errorCode.
             * The value stored in m_errorCode will always be the resulting status of the most recent failing function call.
             * @return m_errorCode
             */
             star_knight::Initializer::SKRendererInitErrCodes getErrorCode();
 
-             /*** Returns the value stored in @refitem m_errorMessage.
+             /*** Returns the value stored in m_errorMessage.
              * The value stored in m_errorCode will always be the resulting message of the most recent failing function call.
              * @return m_errorMessage.
              */
@@ -72,7 +72,8 @@ namespace star_knight
 
             /*** Saves error status and message.
             * If any of the functions in this class encounter an error, this is called to set the specific message and the isError var.
-            * @param errorMessage Error message to save. Expected to be \n and null-terminated.
+            * @param prependedToError Error message to save. Expected to be \n and null-terminated.
+            * @param errorCode Error code to save. Expected to be one of SKRendererInitErrCodes.
             */
             void saveError(const std::string& prependedToError, SKRendererInitErrCodes errorCode);
     };
