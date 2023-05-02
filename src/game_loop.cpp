@@ -20,15 +20,8 @@
 
 namespace star_knight
 {
-    star_knight::GameLoop::GameLoop()
-    {
-
-    }
-
-    star_knight::GameLoop::~GameLoop()
-    {
-
-    }
+    star_knight::GameLoop::GameLoop() = default;
+    star_knight::GameLoop::~GameLoop() = default;
 
     int
     star_knight::GameLoop::mainLoop()
