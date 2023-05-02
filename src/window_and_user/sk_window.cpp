@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "sk_global_defines.h"
+
 #include "sk_window.h"
 
 namespace star_knight
@@ -53,11 +55,17 @@ namespace star_knight
     void
     star_knight::SKWindow::initSDLWindow()
     {
-        // Consts to init screen size. // TODO(DendyA): Move to a more globally accessible location.
-        const int SCREEN_WIDTH = 1280;
-        const int SCREEN_HEIGHT = 1024;
+        static const int STARTING_WINDOW_POS_X = SDL_WINDOWPOS_CENTERED;
+        static const int STARTING_WINDOW_POS_Y = SDL_WINDOWPOS_CENTERED;
+        static const int WINDOW_CREATION_FLAGS = SDL_WINDOW_OPENGL; // Other flags can be OR'd together here.
+        static const std::string WINDOW_CREATION_TITLE = "Star Knight";
 
-        m_pwindow = SDL_CreateWindow("Star Knight", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+        m_pwindow = SDL_CreateWindow(WINDOW_CREATION_TITLE.c_str(),
+                                     STARTING_WINDOW_POS_X,
+                                     STARTING_WINDOW_POS_Y,
+                                     (int)STARTING_SCREEN_WIDTH,
+                                     (int)STARTING_SCREEN_HEIGHT,
+                                     WINDOW_CREATION_FLAGS);
 
         if(!m_pwindow)
         {

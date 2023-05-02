@@ -10,6 +10,8 @@
 
 #include "SDL_events.h"
 
+#include "sk_global_defines.h"
+
 #include "window_and_user/sk_window.h"
 #include "renderer/initializer.h"
 #include "shaders/shader_manager.h"
@@ -31,9 +33,6 @@ namespace star_knight
     int
     star_knight::GameLoop::mainLoop()
     {
-        // Consts to set view and projection matrix. TODO(DendyA): These need to be kept in a more globally accessible location.
-        const uint32_t SCREEN_WIDTH = 1280u;
-        const uint32_t SCREEN_HEIGHT = 1024u;
 
 //    Since the SDL_Quit function is called in SKWindow's destructor, simply terminating the program will handle the shutdown of the SDL subsytems.
         star_knight::SKWindow skWindow = star_knight::SKWindow();
@@ -99,7 +98,7 @@ namespace star_knight
                 float proj[16];
                 bx::mtxProj(proj,
                             60.0f,
-                            float(SCREEN_WIDTH)/float(SCREEN_HEIGHT),
+                            float(STARTING_SCREEN_WIDTH) / float(STARTING_SCREEN_HEIGHT),
                             0.1f, 100.0f,
                             bgfx::getCaps()->homogeneousDepth);
 
@@ -107,8 +106,8 @@ namespace star_knight
 
                 // Set view 0 default viewport.
                 bgfx::setViewRect(0, 0, 0,
-                                  SCREEN_WIDTH,
-                                  SCREEN_HEIGHT);
+                                  (uint16_t)STARTING_SCREEN_WIDTH,
+                                  (uint16_t)STARTING_SCREEN_HEIGHT);
 
                 bgfx::touch(0);
 

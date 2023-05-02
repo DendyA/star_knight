@@ -23,6 +23,8 @@ ADD_LIBRARY(${PROJECT_NAME}
 )
 
 INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
+        ${CMAKE_SOURCE_DIR}/src/defines # Includes the sk_global_defines.h header.
+
         ${CMAKE_BINARY_DIR}/lib/SDL2/include
         ${CMAKE_BINARY_DIR}/lib/SDL2/include-config-debug # TODO(DendyA): This will probably need to be changed to a release version in the future.
 )

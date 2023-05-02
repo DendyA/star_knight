@@ -27,6 +27,8 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 )
 
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
+		${CMAKE_SOURCE_DIR}/src/defines/
+
 		${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bx/include/
 )
 

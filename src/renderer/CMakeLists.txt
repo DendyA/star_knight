@@ -23,7 +23,9 @@ ADD_LIBRARY(${PROJECT_NAME}
 )
 
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
-        ${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bgfx/include/
+        ${CMAKE_SOURCE_DIR}/src/defines # Includes the sk_global_defines.h header.
+
+        ${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bgfx/include
         ${CMAKE_BINARY_DIR}/lib/SDL2/include
         ${CMAKE_BINARY_DIR}/lib/SDL2/include-config-debug # TODO(DendyA): This will probably need to be changed to a release version in the future.
 )

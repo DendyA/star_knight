@@ -8,6 +8,8 @@
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
 
+#include "sk_global_defines.h"
+
 #include "initializer.h"
 
 namespace star_knight
@@ -70,15 +72,11 @@ namespace star_knight
     void
     star_knight::Initializer::initbgfxView()
     {
-        // Consts to reset screen size. TODO(DendyA): These need to be kept in a more globally accessible location.
-        const uint32_t SCREEN_WIDTH = 1280u;
-        const uint32_t SCREEN_HEIGHT = 1024u;
-
-        bgfx::reset(SCREEN_WIDTH, SCREEN_HEIGHT, BGFX_RESET_VSYNC);
+        bgfx::reset(STARTING_SCREEN_WIDTH, STARTING_SCREEN_HEIGHT, BGFX_RESET_VSYNC);
 
         bgfx::setDebug(BGFX_DEBUG_TEXT);
 
-        bgfx::setViewRect(0, 0, 0, (uint16_t)SCREEN_WIDTH, (uint16_t)SCREEN_HEIGHT);
+        bgfx::setViewRect(0, 0, 0, (uint16_t)STARTING_SCREEN_WIDTH, (uint16_t)STARTING_SCREEN_HEIGHT);
 
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
 
