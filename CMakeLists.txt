@@ -22,6 +22,8 @@ ADD_SUBDIRECTORY(src/renderer)
 
 ADD_EXECUTABLE(${PROJECT_NAME}
 	src/main.cpp
+	src/game_loop.cpp
+	src/game_loop.h
 )
 
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
