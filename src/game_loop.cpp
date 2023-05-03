@@ -4,16 +4,12 @@
 #include <iostream>
 
 #include "bgfx.h"
-// IMPORTANT: This MUST be included before SDL_syswm.h since in that header None is defined as 0L which breaks bx/math.h
-// Moving it here, bx/math.h defines the None tag instead and SDL_syswm.h has an ifndef guard to check if None is not defined.
-#include "bx/math.h"
 
 #include "SDL_events.h"
 
-#include "sk_global_defines.h"
-
 #include "window_and_user/sk_window.h"
 #include "renderer/initializer.h"
+#include "renderer/transformation_manager.h"
 #include "shaders/shader_manager.h"
 
 #include "game_loop.h"
@@ -69,6 +65,8 @@ namespace star_knight
         bgfx::ProgramHandle programHandle = ShaderManager::generateProgram("../compiled_shaders/vertex/vs_simple.bin",
                                                                            "../compiled_shaders/fragment/fs_simple.bin");
 
+        star_knight::TransformationManager transformManager = star_knight::TransformationManager();
+
         SDL_Event currEvent;
         bool quit = false;
 
@@ -81,41 +79,6 @@ namespace star_knight
                     quit = true;
                 }
 
-                const bx::Vec3 at  = { 0.0f, 0.0f,   0.0f };
-                const bx::Vec3 eye = { 0.0f, 0.0f, 10.0f };
-
-//             Set view and projection matrix for view 0.
-                float view[16];
-                bx::mtxLookAt(view, eye, at);
-
-                float proj[16];
-                bx::mtxProj(proj,
-                            60.0f,
-                            float(STARTING_SCREEN_WIDTH) / float(STARTING_SCREEN_HEIGHT),
-                            0.1f, 100.0f,
-                            bgfx::getCaps()->homogeneousDepth);
-
-                bgfx::setViewTransform(0, view, proj);
-
-                // Set view 0 default viewport.
-                bgfx::setViewRect(0, 0, 0,
-                                  (uint16_t)STARTING_SCREEN_WIDTH,
-                                  (uint16_t)STARTING_SCREEN_HEIGHT);
-
-                bgfx::touch(0);
-
-
-                float mtx[16];
-                bx::mtxRotateY(mtx, 0.0f);
-
-                // position x,y,z
-                mtx[12] = 0.0f;
-                mtx[13] = 0.0f;
-                mtx[14] = 0.0f;
-
-                // Set model matrix for rendering.
-                bgfx::setTransform(mtx);
-
                 // Set vertex and index buffer.
                 bgfx::setVertexBuffer(0, vertexBufferHandle);
                 bgfx::setIndexBuffer(indexBufferHandle);
@@ -125,6 +88,9 @@ namespace star_knight
 
                 // Submit primitive for rendering to view 0.
                 bgfx::submit(0, programHandle);
+
+                transformManager.updateViewTransform(0);
+                transformManager.setTransformMatrix();
 
                 bgfx::frame();
             }
