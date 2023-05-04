@@ -60,9 +60,9 @@ namespace star_knight
 
         bgfxInitalizer.initbgfxView();
 
-        bgfx::VertexBufferHandle vertexBufferHandle = ShaderManager::initVertexBuffer();
-        bgfx::IndexBufferHandle indexBufferHandle = ShaderManager::initIndexBuffer();
-        bgfx::ProgramHandle programHandle = ShaderManager::generateProgram("../compiled_shaders/vertex/vs_simple.bin",
+        bgfx::VertexBufferHandle vertexBufferHandle = star_knight::ShaderManager::initVertexBuffer();
+        bgfx::IndexBufferHandle indexBufferHandle = star_knight::ShaderManager::initIndexBuffer();
+        bgfx::ProgramHandle programHandle = star_knight::ShaderManager::generateProgram("../compiled_shaders/vertex/vs_simple.bin",
                                                                            "../compiled_shaders/fragment/fs_simple.bin");
 
         star_knight::TransformationManager transformManager = star_knight::TransformationManager();

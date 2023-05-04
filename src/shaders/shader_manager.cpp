@@ -34,7 +34,7 @@ bgfx::VertexLayout PosColorVertex::ms_decl;
 //      In future revisions, this should just be the name of the file not the full path.
 //      The full path should probably be defined in this class and then pre-pended to the filename.
 bgfx::ShaderHandle
-ShaderManager::loadShader(const std::string& shaderName)
+star_knight::ShaderManager::loadShader(const std::string& shaderName)
 {
 //    TODO(DendyA): Need to add error checking here.
     std::ifstream shader(shaderName);
@@ -54,7 +54,7 @@ ShaderManager::loadShader(const std::string& shaderName)
 }
 
 bgfx::ProgramHandle
-ShaderManager::generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName)
+star_knight::ShaderManager::generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName)
 {
     bgfx::ShaderHandle vertexShaderHandle = loadShader(vertexShaderName);
     bgfx::ShaderHandle fragmentShaderHandle = loadShader(fragmentShaderName);
@@ -68,9 +68,8 @@ ShaderManager::generateProgram(const std::string& vertexShaderName, const std::s
 }
 
 bgfx::VertexBufferHandle
-ShaderManager::initVertexBuffer()
+star_knight::ShaderManager::initVertexBuffer()
 {
-//    TODO(DendyA): This needs to be removed in future revisions of the code. Should be read-in from a file and then passed-in here.
     static PosColorVertex s_cubeVertices[] =
     {
     {  0.5f,  0.5f, 0.0f, 0xff0000ff },
@@ -88,9 +87,8 @@ ShaderManager::initVertexBuffer()
 }
 
 bgfx::IndexBufferHandle
-ShaderManager::initIndexBuffer()
+star_knight::ShaderManager::initIndexBuffer()
 {
-//    TODO(DendyA): This needs to be removed in future revisions of the code. Should be read-in from a file and then passed-in here.
     static const uint16_t s_cubeTriList[] =
     {
             0,1,3,
