@@ -10,7 +10,7 @@
 
 namespace star_knight
 {
-    /*** SKWindow class.
+    /** SKWindow class\n
      * The SKWindow class is responsible for the initialization / destruction of SDL, an SDL window, and any other SDL sub-components.
      */
     class SKWindow final
@@ -25,64 +25,67 @@ namespace star_knight
                 kSDLWinCreateErr
             };
 
-            /*** Constructor
-            * The main constructor of the SKWindow class. Calls initSDL.
-            */
+            /** Constructor\n
+             * The main constructor of the SKWindow class. Calls initSDL.
+             */
             SKWindow();
 
-            /*** Destructor.
-            * The main destructor of the SKWindow class. Calls destroySDL.
-            */
+            /** Destructor\n
+             * The main destructor of the SKWindow class. Calls destroySDL.
+             */
             ~SKWindow();
 
-            /*** Returns the value stored in m_pwindow.
+            /** getpwindow\n
              * Returns the instance of SDL_Window saved as a member variable in this class.
              * m_pwindow will be a nullptr if this class did not initialize properly.
              * @return m_pwindow
              */
             SDL_Window* getpwindow();
 
-            /*** Returns the value stored in m_errorCode.
-            * The value stored in m_errorCode will always be the resulting status of the most recent failing function call.
-            * @return m_errorCode
-            */
+            /** getErrorCode\n
+             * Returns the value stored in m_errorCode.
+             * The value stored in m_errorCode will always be the resulting status of the most recent failing function call.
+             * @return m_errorCode
+             */
             star_knight::SKWindow::SKWindowErrCodes getErrorCode();
 
-            /*** Returns the value stored in m_errorMessage.
-            * The value stored in m_errorCode will always be the resulting message of the most recent failing function call.
-            * @return m_errorMessage.
-            */
+            /** getErrorMessage\n
+             * Returns the value stored in m_errorMessage.
+             * The value stored in m_errorCode will always be the resulting message of the most recent failing function call.
+             * @return m_errorMessage.
+             */
             std::string getErrorMessage();
 
-            /*** Initialize and create the SDL_Window object.
-            * Used to initialize the main SDL_Window object and store it in the passed in pointer.
-            * @todo Parameterize the various window creation parameters. (x, y, size, title, and flags).
-            * @param pwindow A reference to a pointer to hold the newly created window.
-            * @return Status of function call. 0 if successful, 1 if failure.
-            */
+            /** initSDLWindow\n
+             * Used to initialize the main SDL_Window object and store it in the passed in pointer.
+             * @todo Parameterize the various window creation parameters. (x, y, size, title, and flags).
+             * @param pwindow A reference to a pointer to hold the newly created window.
+             * @return Status of function call. 0 if successful, 1 if failure.
+             */
             void initSDLWindow();
         private:
             SDL_Window* m_pwindow;
             star_knight::SKWindow::SKWindowErrCodes m_errorCode;
             std::string m_errorMessage;
 
-            /*** Initialize SDL and its various subsystems.
-            * Specifically used to initialize the SDL system and the necessary subsystems (audio, video, etc.).
-            * @return Status of function call. 0 if successful, 1 if failure.
-            */
+            /** initSDL\n
+             * Specifically used to initialize the SDL system and the necessary subsystems (audio, video, etc.).
+             * @return Status of function call. 0 if successful, 1 if failure.
+             */
             void initSDL();
 
-            /*** Used to destroy various SDL objects and the SDL system as a whole.
-            * Destroys various SDL objects (SDL_Window if not NULL) and the SDL system and its subsystems (video, audio, etc.).
-            * @param pwindow Window to be destructed if not NULL.
-            */
+            /** destroySDL\n
+             * Destroys various SDL objects (SDL_Window if not NULL) and the SDL system and its subsystems (video, audio, etc.).
+             * @param pwindow Window to be destructed if not NULL.
+             */
             void destroySDL();
 
-             /*** Saves error status and message.
-             * If any of the functions in this class encounter an error, this is called to set the specific message and the isError var.
-             * @param prependedToError String to prepend to the SDL error message. Expected to be \n and null-terminated.
-             * @param errorCode Error code to save. Expected to be one of SKWindowErrCodes.
-             */
+             /** saveError\n
+              * Saves error status and message.
+              * If any of the functions in this class encounter an error, this is called to set the specific message and the isError var.
+              * @param prependedToError String to prepend to the SDL error message. Expected to be \n and null-terminated.
+              * @param errorCode Error code to save. Expected to be one of SKWindowErrCodes.
+              */
             void saveError(const std::string& prependedToError, SKWindowErrCodes errorCode);
     };
 } // star_knight
