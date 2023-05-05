@@ -82,7 +82,7 @@ namespace star_knight
 
             /** saveError\n
              * Saves error status and message.
-            * If any of the functions in this class encounter an error, this is called to set the specific message and the isError var.
+            * If any of the functions in this class encounter an error, this is called to set the specific message and the errorCode variable.
             * @param prependedToError Error message to save. Expected to be \n and null-terminated.
             * @param errorCode Error code to save. Expected to be one of SKRendererInitErrCodes.
             */
