@@ -26,6 +26,12 @@ namespace star_knight
             };
 
             /** Constructor\n
+             * The default constructor of the Initializer class. Does @b NOT call initbgfx.
+             * That is the responsibility of the class instantiating this one.
+             */
+            Initializer();
+
+            /** Constructor\n
              * The main constructor of the Initializer class. Calls initbgfx.
              * @param pwindow The SDL_Window* to pull window information from.
              */
@@ -52,6 +58,14 @@ namespace star_knight
               */
             std::string getErrorMessage();
 
+            /** initbgfx\n
+             * Initializes various bgfx objects like the Init struct, retrieves window information from SDL,
+             * and initializes the bgfx system as a whole etc.
+             * @param pwindow Pointer to the window bgfx is to render in.
+             * @return Status of the function call. 0 if successful, 1 if failure.
+             */
+            void initbgfx(SDL_Window* pwindow);
+
              /** initbgfxView\n
               * Initializes bgfx view objects.
               * Specifically used to set debug flags, reset the backbuffer size, and inits view objects among other things.
@@ -65,14 +79,6 @@ namespace star_knight
         private:
             star_knight::Initializer::SKRendererInitErrCodes m_errorCode;
             std::string m_errorMessage;
-
-            /** initbgfx\n
-            * Initializes various bgfx objects like the Init struct, retrieves window information from SDL,
-            * and initializes the bgfx system as a whole etc.
-            * @param pwindow Pointer to the window bgfx is to render in.
-            * @return Status of the function call. 0 if successful, 1 if failure.
-            */
-            void initbgfx(SDL_Window* pwindow);
 
             /** saveError\n
              * Saves error status and message.

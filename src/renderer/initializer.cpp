@@ -14,6 +14,12 @@
 
 namespace star_knight
 {
+    Initializer::Initializer()
+    {
+        m_errorCode = kNoErr;
+        m_errorMessage = "";
+    }
+
     Initializer::Initializer(SDL_Window* pwindow)
     {
         m_errorCode = kNoErr;
