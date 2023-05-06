@@ -46,7 +46,7 @@ star_knight::SKWindow::initSDL()
 
     if(SDL_Init(initFlags) < 0)
     {
-        saveError("Window was unable to be created!\n", kSDLInitErr);
+        saveError("SKWindow: Window was unable to be created!\n", kSDLInitErr);
     }
 }
 
@@ -67,7 +67,7 @@ star_knight::SKWindow::initSDLWindow()
 
     if(!m_pwindow)
     {
-        saveError("Window was unable to be created!\n", kSDLWinCreateErr);
+        saveError("SKWindow: Window was unable to be created!\n", kSDLWinCreateErr);
     }
 }
 

@@ -49,7 +49,7 @@ star_knight::Initializer::initbgfx(SDL_Window* pwindow)
 
     if(SDL_GetWindowWMInfo(pwindow, &windowManagementInfo) == SDL_FALSE)
     {
-        const std::string errorMessage = "Unable to get window management information.\nSDL Error:" + std::string(SDL_GetError());
+        const std::string errorMessage = "Initializer: Unable to get window management information.\nSDL Error:" + std::string(SDL_GetError());
         saveError(errorMessage, kSDLNoManagementWindowInfoErr);
         return;
     }
@@ -69,7 +69,7 @@ star_knight::Initializer::initbgfx(SDL_Window* pwindow)
 
     if(!bgfx::init(initData))
     {
-        saveError("SK ~ BGFX Error: Unable to initialize bgfx!\n", kbgfxInitErr);
+        saveError("Initializer: BGFX Error ~ Unable to initialize bgfx!\n", kbgfxInitErr);
     }
 }
 
