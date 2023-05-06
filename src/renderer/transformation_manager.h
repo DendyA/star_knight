@@ -23,7 +23,7 @@ namespace star_knight
      * update the view transform.
      * @todo Need to add matrix "zero-ing" functions once the matrices have been sent to the bgfx system.
      */
-    class TransformationManager
+    class TransformationManager final
     {
         public:
             /** Constructor\n

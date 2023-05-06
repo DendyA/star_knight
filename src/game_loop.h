@@ -17,7 +17,7 @@ namespace star_knight
      * This class is the runner-type class of the game engine. It is responsible for calling initialization/destruction logic for the
      * SDL and bgfx encapsulating classes, setting up and submitting shaders to the GPU, and running the main game loop.
      */
-    class GameLoop
+    class GameLoop final
     {
         public:
             // Typing this as a basic int because this may need to be returned as the return value in main() in the case of an error.

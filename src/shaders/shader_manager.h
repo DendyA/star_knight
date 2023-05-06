@@ -16,7 +16,7 @@ namespace star_knight
      * All functions are static given that they don't rely on any member variables.
      * @todo Refactor the ShaderManager class once the shader subsystem interaction with the engine is better understood.
      */
-    class ShaderManager
+    class ShaderManager final
     {
         public:
             /** generateProgram\n
