@@ -5,9 +5,6 @@
 
 #include "bgfx.h"
 
-#include "SDL_events.h"
-
-#include "renderer/transformation_manager.h"
 #include "shaders/shader_manager.h"
 
 #include "game_loop.h"
@@ -91,6 +88,28 @@ namespace star_knight
         m_bgfxInitializer.initbgfxView();
     }
 
+    void
+    GameLoop::handleKeyDownEvent(SDL_Event keyDownEvent)
+    {
+        switch(keyDownEvent.key.keysym.sym)
+        {
+            case SDLK_LEFT:
+                m_transformManager.view_translateX(0.1);
+                break;
+            case SDLK_RIGHT:
+                m_transformManager.view_translateX(-0.1);
+                break;
+            case SDLK_UP:
+                m_transformManager.view_translateY(0.1);
+                break;
+            case SDLK_DOWN:
+                m_transformManager.view_translateY(-0.1);
+                break;
+            default:
+                break;
+        }
+    }
+
     GameLoop::SKGameLoopErrCodes
     star_knight::GameLoop::mainLoop()
     {
@@ -100,7 +119,9 @@ namespace star_knight
         bgfx::ProgramHandle programHandle = star_knight::ShaderManager::generateProgram("../compiled_shaders/vertex/vs_simple.bin",
                                                                            "../compiled_shaders/fragment/fs_simple.bin");
 
-        star_knight::TransformationManager transformManager = star_knight::TransformationManager();
+        m_transformManager = star_knight::TransformationManager();
+
+        m_transformManager.setTransformMatrix();
 
         SDL_Event currEvent;
         bool quit = false;
@@ -109,9 +130,16 @@ namespace star_knight
         {
             while(SDL_PollEvent(&currEvent))
             {
-                if(currEvent.type == SDL_QUIT)
+                switch(currEvent.type)
                 {
-                    quit = true;
+                    case SDL_QUIT:
+                        quit = true;
+                        break;
+                    case SDL_KEYDOWN:
+                        handleKeyDownEvent(currEvent);
+                        break;
+                    default:
+                        break;
                 }
 
                 // Set vertex and index buffer.
@@ -122,10 +150,11 @@ namespace star_knight
                 bgfx::setState(BGFX_STATE_DEFAULT);
 
                 // Submit primitive for rendering to view 0.
+                // FIXME(DendyA): When this is put into the main game loop, this causes a delay in closing the game window.
+                //  Related to issue #17.
                 bgfx::submit(0, programHandle);
 
-                transformManager.updateViewTransform(0);
-                transformManager.setTransformMatrix();
+                m_transformManager.updateViewTransform(0);
 
                 bgfx::frame();
             }

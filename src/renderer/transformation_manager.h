@@ -18,9 +18,9 @@ namespace star_knight
     /** TransformationManager class.\n
      * The TransformationManager class is responsible for the initialization and updating of the matrices used for rendering.
      * The matrices in question being the projection, view, and transformation matrices. The workflow of using the class is to
-     * call one of the *future transformation update functions* which will then call the relevant set*Matrix function
-     * and then call the updateViewTransform function if either of the projection or view matrices were updated.
-     * @todo Add the transformation update functions
+     * call one of the transformation update functions to update the parameters or vectors of the projection or view matrix respectively.
+     * @todo Then the game loop will call the generic update function which will conditionally check if either matrix was updated, and then
+     * update the view transform.
      * @todo Need to add matrix "zero-ing" functions once the matrices have been sent to the bgfx system.
      */
     class TransformationManager
@@ -40,11 +40,27 @@ namespace star_knight
             /** updateViewTransform\n
              * Updates the view transform, which takes both the view and projection matrix, and ties it to the
              * given viewId.
-             * @todo Currently calls the two update functions. Instead the *future transformation update functions* should call the
-             * update functions for the matrices needing to be updated and then call this from those matrix update functions.
+             * @todo This should conditionally check if either the view or projection matrix updated (by use of a member flag)
+             *  and then if it did, only then update the relevant matrix and update the view transform. This should be
+             *  updated to be a generic update function (through which any updates needed during game are performed) and then
+             *  be called from GameLoop's main loop.
              * @param viewID The viewID to tie the view transform to.
              */
             void updateViewTransform(bgfx::ViewId viewID);
+
+            /** view_translateX\n
+             * Updates the eyePosition and lookingAt vector for the View matrix. Essentially, "moves" the camera
+             * delta amount in the X direction.
+             * @param delta The amount the "position" needs to change. Positive moves left, negative moves right.
+             */
+            void view_translateX(float delta);
+
+            /** view_translateY\n
+             * Updates the eyePosition and lookingAt vector for the View matrix. Essentially, "moves" the camera
+             * delta amount in the Y direction.
+             * @param delta The amount the "position" needs to change. Positive moves up, negative moves down.
+             */
+            void view_translateY(float delta);
 
             /** setTransformMatrix\n
              * Updates the transform matrix and also gives the transform matrix to bgfx.

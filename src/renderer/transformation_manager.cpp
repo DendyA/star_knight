@@ -50,6 +50,21 @@ namespace star_knight
     }
 
     void
+    TransformationManager::view_translateX(float delta)
+    {
+        m_lookingAt.x += delta;
+        m_eyePosition.x += delta;
+
+    }
+
+    void
+    TransformationManager::view_translateY(float delta)
+    {
+        m_lookingAt.y += delta;
+        m_eyePosition.y += delta;
+    }
+
+    void
     star_knight::TransformationManager::setTransformMatrix()
     {
 

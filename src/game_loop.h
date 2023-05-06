@@ -4,8 +4,11 @@
 #ifndef STAR_KNIGHT_GAME_LOOP_H
 #define STAR_KNIGHT_GAME_LOOP_H
 
+#include "SDL_events.h"
+
 #include "window_and_user/sk_window.h"
 #include "renderer/initializer.h"
+#include "renderer/transformation_manager.h"
 
 namespace star_knight
 {
@@ -64,18 +67,26 @@ namespace star_knight
 
             star_knight::SKWindow m_skWindow;
             star_knight::Initializer m_bgfxInitializer;
+            star_knight::TransformationManager m_transformManager;
 
             /** initializeSDLGameObjects\n
              * Initializes all of the SDL game objects required for running the main game loop.
-             * @note This function @b MUST be called before initializebgfxGameObjects since that function relies on results of this one.
+             * @note This function @b MUST be called before initializebgfxGameObjects since that function relies on the results of this one.
              */
             void initializeSDLGameObjects();
 
             /** initializebgfxGameObjects()\n
              * Initializes all of the bgfx game objects required for running the main game loop.
-             * @note This function @b MUST be called after initializeSDLGameObjects since this function relies on results of that one.
+             * @note This function @b MUST be called after initializeSDLGameObjects since this function relies on the results of that one.
              */
             void initializebgfxGameObjects();
+
+            /** handleKeyDownEvent\n
+             * This function handles all supported key down events and calls the relevant functions needed to
+             * initiate the action requested by the user pressing the key down.
+             * @param keyDownEvent The key down event to be handled.
+             */
+            void handleKeyDownEvent(SDL_Event keyDownEvent);
 
             /** saveError\n
              * Saves error status and message.
