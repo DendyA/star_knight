@@ -116,8 +116,21 @@ namespace star_knight
 
         bgfx::VertexBufferHandle vertexBufferHandle = star_knight::ShaderManager::initVertexBuffer();
         bgfx::IndexBufferHandle indexBufferHandle = star_knight::ShaderManager::initIndexBuffer();
-        bgfx::ProgramHandle programHandle = star_knight::ShaderManager::generateProgram("../compiled_shaders/vertex/vs_simple.bin",
-                                                                           "../compiled_shaders/fragment/fs_simple.bin");
+
+        bgfx::ProgramHandle programHandle{};
+
+        bool generateProgramStatus = star_knight::ShaderManager::generateProgram("vs_simple.bin","fs_simple.bin", programHandle);
+
+        if(!generateProgramStatus)
+        {
+            saveError("GameLoop: Error while trying to generate shader program\n", kShaderManagerProgramGenerateErr);
+
+            // TODO(DendyA): If possible, make these handles member variables in this class and then these can be destroyed from the destructor.
+            bgfx::destroy(vertexBufferHandle);
+            bgfx::destroy(indexBufferHandle);
+
+            return kShaderManagerProgramGenerateErr;
+        }
 
         m_transformManager = star_knight::TransformationManager();
 

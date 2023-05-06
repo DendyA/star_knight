@@ -4,6 +4,8 @@
 #ifndef STAR_KNIGHT_SHADER_MANAGER_H
 #define STAR_KNIGHT_SHADER_MANAGER_H
 
+#include <vector>
+
 #include "bgfx.h"
 
 namespace star_knight
@@ -20,12 +22,13 @@ namespace star_knight
             /** generateProgram\n
              * This program loads the two passed in shader files and creates the shader program from these and returns it to the caller.
              * It internally calls the loadShader() function which is responsible for reading the shader from disk.
-             * @note It destroys the two loaded shader handles once it has been loaded into the shader program.
-             * @param vertexShaderName The path to the vertex shader file on disk.
-             * @param fragmentShaderName The path to the vertex shader file on disk.
-             * @return The program handle for the created shader program.
+             * @note It destroys the two loaded shader handles once they have been loaded into the shader program.
+             * @param vertexShaderName The name of the vertex shader file on disk.
+             * @param fragmentShaderName The name of the the fragment shader file on disk.
+             * @param program The programHandle to save the created program to.
+             * @return The result of running this function. True for success, false otherwise.
              */
-            static bgfx::ProgramHandle generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName);
+            static bool generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName, bgfx::ProgramHandle& program);
 
             /** initVertexBuffer\n
              * Creates a vertex buffer out of the supplied primitive and vertex layout struct.
@@ -42,12 +45,28 @@ namespace star_knight
             static bgfx::IndexBufferHandle initIndexBuffer();
 
         private:
+            // Used to know which index of the COMPILED_SHADER_PATHS variable to use.
+            // In other words, which type of shader is being read-in.
+            enum ShaderManagerShaderTypes: uint32_t
+            {
+                kVertexShader = 0u,
+                kFragmentShader
+            };
+
+            // List of the paths to the compiled shaders. This path is relative to the build folder.
+            inline static const std::vector<std::string> COMPILED_SHADER_PATHS = {
+                    "../compiled_shaders/vertex/",
+                    "../compiled_shaders/fragment/"
+            };
+
             /** loadShader\n
              * Reads-in a shader from disk and loads it into a ShaderHandle object.
              * @param shaderName The path to the shader file on disk.
-             * @return The shader handle to the loaded and initialized shader.
+             * @param typeIndex One of ShaderManagerShaderTypes for the type of shader pointed to by parameter shaderName.
+             * @param handle The ShaderHandle to save the loaded shader to.
+             * @return The result of running this function. True for success, false otherwise.
              */
-            static bgfx::ShaderHandle loadShader(const std::string& shaderName);
+            static bool loadShader(const std::string& shaderName, ShaderManagerShaderTypes typeIndex, bgfx::ShaderHandle& handle);
     };
 } // star_knight
 
