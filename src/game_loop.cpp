@@ -79,6 +79,8 @@ star_knight::GameLoop::initializebgfxGameObjects()
 //    This errors-out and returns immediately since having no bgfx corresponds to the inability to display graphics.
     if(m_bgfxInitializer.getErrorCode() != star_knight::Initializer::SKRendererInitErrCodes::kNoErr)
     {
+        // destroybgfx() (on m_bgfxInitializer) is never called here because the only way an error is caught here,
+        // is before bgfx is initialized. And calling destorybgfx() before bgfx is initialized causes a fatal error.
         saveError(m_bgfxInitializer.getErrorMessage(), kbgfxGameObjectsInitErr);
         return;
     }

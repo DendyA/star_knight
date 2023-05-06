@@ -20,7 +20,8 @@ namespace star_knight
     {
         public:
             /** generateProgram\n
-             * This program loads the two passed in shader files and creates the shader program from these and returns it to the caller.
+             * This program loads the two passed in shader files and creates the shader program from these and returns it to the
+             * user by way of the passed-by-reference parameter.
              * It internally calls the loadShader() function which is responsible for reading the shader from disk.
              * @note It destroys the two loaded shader handles once they have been loaded into the shader program.
              * @param vertexShaderName The name of the vertex shader file on disk.

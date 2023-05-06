@@ -62,7 +62,6 @@ namespace star_knight
             SKGameLoopErrCodes mainLoop();
 
         private:
-
             star_knight::GameLoop::SKGameLoopErrCodes m_errorCode;
             std::string m_errorMessage;
 

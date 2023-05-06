@@ -58,7 +58,6 @@ namespace star_knight
 
             /** initSDLWindow\n
              * Used to initialize the main SDL_Window object and store it in the passed in pointer.
-             * @todo Parameterize the various window creation parameters. (x, y, size, title, and flags).
              * @param pwindow A reference to a pointer to hold the newly created window.
              * @return Status of function call. 0 if successful, 1 if failure.
              */
