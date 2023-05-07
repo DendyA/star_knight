@@ -17,17 +17,23 @@ ADD_SUBDIRECTORY(lib/bgfx_cmake)
 
 # Engine components to build
 ADD_SUBDIRECTORY(src/shaders)
+ADD_SUBDIRECTORY(src/window_and_user)
+ADD_SUBDIRECTORY(src/renderer)
 
 ADD_EXECUTABLE(${PROJECT_NAME}
 	src/main.cpp
+	src/game_loop.cpp
+	src/game_loop.h
 )
 
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
-		${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bx/include/
+		${CMAKE_SOURCE_DIR}/src/defines/
 )
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC
 		SDL2
 		bgfx
 		star_knight_shaders
+		star_knight_window_and_user
+		star_knight_renderer
 )

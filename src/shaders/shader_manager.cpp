@@ -3,8 +3,7 @@
 
 #include <fstream>
 #include <sstream>
-
-#include "bgfx.h"
+#include <iostream>
 
 #include "shader_manager.h"
 
@@ -32,47 +31,73 @@ struct PosColorVertex
 
 bgfx::VertexLayout PosColorVertex::ms_decl;
 
-// TODO(DendyA): The current value of shaderName is the full path to the file on disk.
-//      In future revisions, this should just be the name of the file not the full path.
-//      The full path should probably be defined in this class and then pre-pended to the filename.
-bgfx::ShaderHandle
-ShaderManager::loadShader(const std::string& shaderName)
+bool
+star_knight::ShaderManager::loadShader(const std::string& shaderName, ShaderManagerShaderTypes typeIndex, bgfx::ShaderHandle& handle)
 {
-//    TODO(DendyA): Need to add error checking here.
-    std::ifstream shader(shaderName);
+    bool success = false;
+    const std::string fullFilePath = COMPILED_SHADER_PATHS[typeIndex] + shaderName;
+
+    std::ifstream shader(fullFilePath); // No need to explicitly call close, ifstream handles this when shader goes out of scope.
+
+    if(!shader.is_open())
+    {
+        std::cerr << "ShaderManager: File could not be opened: " << fullFilePath << std::endl;
+        return success;
+    }
+
     std::stringstream readBuffer;
     readBuffer << shader.rdbuf();
 
-//    TODO(DendyA): This needs to be tested. Especially the pointer to the shaderData passed into copy().
     const std::string shaderData = readBuffer.str();
-    const bgfx::Memory* shaderMem = bgfx::copy(shaderData.c_str(), shaderData.size());
+//  Specifying the size like this should be okay, given that the size of it matches the size of file on disk.
+//  Enough memory will be initialized to hold the entirety of the string aka compiled shader file.
+    const bgfx::Memory* shaderMem = bgfx::copy((void*)shaderData.c_str(), shaderData.size());
 
-    bgfx::ShaderHandle handle = bgfx::createShader(shaderMem);
-    // TODO(DendyA): According to the documentation, the third parameter being INT32_MAX (default) means it expects the string to be null terminated.
-    //      While this is true, I want to refactor later and see if the length should be defined.
+    handle = bgfx::createShader(shaderMem);
+
+//  A third parameter can be used to specify the length of the string but is not necessary here. c_str() returns a const char* to null terminated content
+//  meaning that the third parameter can be left as INT32_MAX since doing so, it expects the name parameter to be null terminated.
     bgfx::setName(handle, shaderName.c_str());
 
-    return handle;
+    success = true;
+
+    return success;
 }
 
-bgfx::ProgramHandle
-ShaderManager::generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName)
+bool
+star_knight::ShaderManager::generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName, bgfx::ProgramHandle& program)
 {
-    bgfx::ShaderHandle vertexShaderHandle = loadShader(vertexShaderName);
-    bgfx::ShaderHandle fragmentShaderHandle = loadShader(fragmentShaderName);
+    bgfx::ShaderHandle vertexShaderHandle{};
+    bgfx::ShaderHandle fragmentShaderHandle{};
+    bool success;
 
-    bgfx::ProgramHandle program = bgfx::createProgram(vertexShaderHandle, fragmentShaderHandle, true);
+    success = loadShader(vertexShaderName, kVertexShader, vertexShaderHandle);
+    if(!success)
+    {
+        std::cerr << "ShaderManager: Error loading shader." << std::endl;
+        return success;
+    }
+
+    success = loadShader(fragmentShaderName, kFragmentShader, fragmentShaderHandle);
+    if(!success)
+    {
+        std::cerr << "ShaderManager: Error loading shader." << std::endl;
+        return success;
+    }
+
+    program = bgfx::createProgram(vertexShaderHandle, fragmentShaderHandle, true);
 
     bgfx::destroy(vertexShaderHandle);
     bgfx::destroy(fragmentShaderHandle);
 
-    return program;
+    success = true;
+
+    return success;
 }
 
 bgfx::VertexBufferHandle
-ShaderManager::initVertexBuffer()
+star_knight::ShaderManager::initVertexBuffer()
 {
-//    TODO(DendyA): This needs to be removed in future revisions of the code. Should be read-in from a file and then passed-in here.
     static PosColorVertex s_cubeVertices[] =
     {
     {  0.5f,  0.5f, 0.0f, 0xff0000ff },
@@ -90,9 +115,8 @@ ShaderManager::initVertexBuffer()
 }
 
 bgfx::IndexBufferHandle
-ShaderManager::initIndexBuffer()
+star_knight::ShaderManager::initIndexBuffer()
 {
-//    TODO(DendyA): This needs to be removed in future revisions of the code. Should be read-in from a file and then passed-in here.
     static const uint16_t s_cubeTriList[] =
     {
             0,1,3,
