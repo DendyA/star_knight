@@ -53,14 +53,14 @@ star_knight::ShaderManager::generateProgram(const std::string& vertexShaderName,
     success = loadShader(vertexShaderName, kVertexShader, vertexShaderHandle);
     if(!success)
     {
-        std::cerr << "ShaderManager: Error loading shader." << std::endl;
+        std::cerr << "ShaderManager: Error loading vertex shader." << std::endl;
         return success;
     }
 
     success = loadShader(fragmentShaderName, kFragmentShader, fragmentShaderHandle);
     if(!success)
     {
-        std::cerr << "ShaderManager: Error loading shader." << std::endl;
+        std::cerr << "ShaderManager: Error loading fragment shader." << std::endl;
         return success;
     }
 
