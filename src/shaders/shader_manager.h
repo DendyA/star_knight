@@ -44,20 +44,6 @@ namespace star_knight
              */
             static void submitMesh(const bgfx::ViewId& viewId, const std::unique_ptr<SKMesh>& mesh, const bgfx::ProgramHandle& program, float* transfromMtx, uint64_t renderState);
 
-            /** initVertexBuffer\n
-             * Creates a vertex buffer out of the supplied primitive and vertex layout struct.
-             * @todo Remove the hard-coded primitive in this function and pass in when read-in from a file.
-             * @return The handle to the init-ed vertex buffer.
-             */
-            static bgfx::VertexBufferHandle initVertexBuffer();
-
-            /** initIndexBuffer\n
-             * Creates an index buffer out of the supplied index list.
-             * @todo Remove the hard-coded list of indexes in this function and pass in when primitive is read-in from a file.
-             * @return The handle to the init-ed index buffer.
-             */
-            static bgfx::IndexBufferHandle initIndexBuffer();
-
         private:
             // Used to know which index of the COMPILED_SHADER_PATHS variable to use.
             // In other words, which type of shader is being read-in.

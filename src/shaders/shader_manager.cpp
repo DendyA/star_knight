@@ -124,36 +124,3 @@ star_knight::ShaderManager::submitMesh(const bgfx::ViewId& viewId, const std::un
 
     bgfx::discard();
 }
-
-bgfx::VertexBufferHandle
-star_knight::ShaderManager::initVertexBuffer()
-{
-    static PosColorVertex s_cubeVertices[] =
-    {
-    {  0.5f,  0.5f, 0.0f, 0xff0000ff },
-    {  0.5f, -0.5f, 0.0f, 0xff0000ff },
-    { -0.5f, -0.5f, 0.0f, 0xff00ff00 },
-    { -0.5f,  0.5f, 0.0f, 0xff00ff00 }
-    };
-
-    PosColorVertex::init();
-
-    bgfx::VertexBufferHandle vertexBufferHandle =
-            bgfx::createVertexBuffer(bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)),PosColorVertex::ms_decl);
-
-    return vertexBufferHandle;
-}
-
-bgfx::IndexBufferHandle
-star_knight::ShaderManager::initIndexBuffer()
-{
-    static const uint16_t s_cubeTriList[] =
-    {
-            0,1,3,
-            1,2,3
-    };
-
-    bgfx::IndexBufferHandle indexBufferHandle = bgfx::createIndexBuffer(bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList)));
-
-    return indexBufferHandle;
-}
