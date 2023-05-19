@@ -9,30 +9,6 @@
 
 #include "shader_manager.h"
 
-// TODO(DendyA): This should be put elsewhere and included in this class.
-struct PosColorVertex
-{
-//  Position data
-    float m_x;
-    float m_y;
-    float m_z;
-
-    uint32_t m_abgr; // Colour value
-
-    static void init()
-    {
-        ms_decl
-                .begin()
-                .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-                .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-                .end();
-    };
-
-    static bgfx::VertexLayout ms_decl;
-};
-
-bgfx::VertexLayout PosColorVertex::ms_decl;
-
 bool
 star_knight::ShaderManager::loadShader(const std::string& shaderName, ShaderManagerShaderTypes typeIndex, bgfx::ShaderHandle& handle)
 {
