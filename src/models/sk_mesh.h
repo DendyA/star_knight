@@ -50,6 +50,8 @@ namespace star_knight
              * objects and SKMeshPrimitives objects.
              * @note The passed in data MUST be parsed from a mesh file compiled with bgfx's geometryc tool.
              * @todo Add error checking and pass the status back to the calling function.
+             * @todo Add support for the compressed vertex and index chunks.
+             * @todo Add error checking to make sure that the data read will NOT go passed the end of the buffer array.
              * @param dataBuff The data to "chunk".
              * @param ramcpy Flag to determine if the vertices and indices should be copied to member variables in an SKMeshInstance object.
              */

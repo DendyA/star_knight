@@ -15,6 +15,7 @@ star_knight::ShaderManager::loadShader(const std::string& shaderName, ShaderMana
     bool success = false;
     const std::string fullFilePath = COMPILED_SHADER_PATHS[typeIndex] + shaderName;
 
+    // FIXME(DendyA): Review this and the buffer logic below, technically the shader files are binary.
     std::ifstream shader(fullFilePath); // No need to explicitly call close, ifstream handles this when shader goes out of scope.
 
     if(!shader.is_open())

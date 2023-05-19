@@ -45,6 +45,7 @@ star_knight::SKMesh::chunk(const std::vector<unsigned char>& dataBuff, bool ramc
     uint32_t readIndex = 0u;
     uint32_t chunk = 0u;
 
+    // TODO(DendyA): Review if this exit condition is valid.
     while(readIndex < dataBuff.size())
     {
         // Important: This move, for reading the chunk, also progresses the read index!

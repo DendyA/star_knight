@@ -58,6 +58,7 @@ namespace star_knight
 
             /** mainLoop\n
              * This is the main loop which is responsible for everything from initialization, destruction and running of the game engine.
+             * @note This function is not called update() but is synonymous with the GameLoop's update() function.
              * @return Ending status of the main game loop. 0 for success, non-zero error code for failure.
              */
             SKGameLoopErrCodes mainLoop();
