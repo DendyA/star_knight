@@ -27,6 +27,7 @@ namespace star_knight
                 kNoErr = 0,
                 kSDLGameObjectsInitErr,
                 kbgfxGameObjectsInitErr,
+                kOpenMeshFileErr,
                 kShaderManagerProgramGenerateErr
             };
 

@@ -3,9 +3,12 @@
 
 #include <iostream>
 
-#include "bgfx.h"
+#include "bgfx/bgfx.h"
 
 #include "shaders/shader_manager.h"
+
+#include "models/sk_parser.h"
+#include "models/sk_mesh.h"
 
 #include "game_loop.h"
 
@@ -113,9 +116,15 @@ star_knight::GameLoop::handleKeyDownEvent(SDL_Event keyDownEvent)
 star_knight::GameLoop::SKGameLoopErrCodes
 star_knight::GameLoop::mainLoop()
 {
+    std::unique_ptr<SKMesh> mesh = std::unique_ptr<SKMesh>(nullptr);
 
-    bgfx::VertexBufferHandle vertexBufferHandle = star_knight::ShaderManager::initVertexBuffer();
-    bgfx::IndexBufferHandle indexBufferHandle = star_knight::ShaderManager::initIndexBuffer();
+    bool openMeshStatus = star_knight::SKParser::openMeshFile("../lib/bgfx_cmake/bgfx/examples/runtime/meshes/bunny.bin", mesh);
+
+    if(!openMeshStatus)
+    {
+        saveError("GameLoop: Error while trying to open mesh file\n", kOpenMeshFileErr);
+        return kOpenMeshFileErr;
+    }
 
     bgfx::ProgramHandle programHandle{};
 
@@ -125,16 +134,20 @@ star_knight::GameLoop::mainLoop()
     {
         saveError("GameLoop: Error while trying to generate shader program\n", kShaderManagerProgramGenerateErr);
 
-        // TODO(DendyA): If possible, make these handles member variables in this class and then these can be destroyed from the destructor.
-        bgfx::destroy(vertexBufferHandle);
-        bgfx::destroy(indexBufferHandle);
+        mesh->destroyHandles();
 
         return kShaderManagerProgramGenerateErr;
     }
 
     m_transformManager = star_knight::TransformationManager();
 
-    m_transformManager.setTransformMatrix();
+    float mtx[16];
+    bx::mtxRotateY(mtx, 0.0f);
+
+    // position x,y,z
+    mtx[12] = 0.0f;
+    mtx[13] = 0.0f;
+    mtx[14] = 0.0f;
 
     SDL_Event currEvent;
     bool quit = false;
@@ -155,17 +168,10 @@ star_knight::GameLoop::mainLoop()
                     break;
             }
 
-            // Set vertex and index buffer.
-            bgfx::setVertexBuffer(0, vertexBufferHandle);
-            bgfx::setIndexBuffer(indexBufferHandle);
-
-            // Set render states.
-            bgfx::setState(BGFX_STATE_DEFAULT);
-
-            // Submit primitive for rendering to view 0.
+            // Submit mesh for rendering to view 0.
             // FIXME(DendyA): When this is put into the main game loop, this causes a delay in closing the game window.
             //  Related to issue #17.
-            bgfx::submit(0, programHandle);
+            star_knight::ShaderManager::submitMesh(0, mesh, programHandle, mtx, 0xffffffffffffffffUL);
 
             m_transformManager.updateViewTransform(0);
 
@@ -173,8 +179,7 @@ star_knight::GameLoop::mainLoop()
         }
     }
 
-    bgfx::destroy(vertexBufferHandle);
-    bgfx::destroy(indexBufferHandle);
+    mesh->destroyHandles();
     bgfx::destroy(programHandle);
 
     return kNoErr;

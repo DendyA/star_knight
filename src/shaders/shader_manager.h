@@ -6,7 +6,9 @@
 
 #include <vector>
 
-#include "bgfx.h"
+#include "bgfx/bgfx.h"
+
+#include "sk_mesh.h"
 
 namespace star_knight
 {
@@ -30,6 +32,17 @@ namespace star_knight
              * @return The result of running this function. True for success, false otherwise.
              */
             static bool generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName, bgfx::ProgramHandle& program);
+
+            /** submitMesh\n
+             * This function takes a mesh and program handle and submits it for rendering. The transformation matrix to apply to the
+             * model is also supplied and set in this function.
+             * @param viewId The id of the view to render the mesh to.
+             * @param mesh The mesh to render.
+             * @param program ProgramHandle to submit with mesh.
+             * @param transfromMtx Transformation matrix to apply to the mesh
+             * @param renderState The render state.
+             */
+            static void submitMesh(const bgfx::ViewId& viewId, const std::unique_ptr<SKMesh>& mesh, const bgfx::ProgramHandle& program, float* transfromMtx, uint64_t renderState);
 
             /** initVertexBuffer\n
              * Creates a vertex buffer out of the supplied primitive and vertex layout struct.

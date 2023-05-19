@@ -19,6 +19,7 @@ ADD_SUBDIRECTORY(lib/bgfx_cmake)
 ADD_SUBDIRECTORY(src/shaders)
 ADD_SUBDIRECTORY(src/window_and_user)
 ADD_SUBDIRECTORY(src/renderer)
+ADD_SUBDIRECTORY(src/models)
 
 ADD_EXECUTABLE(${PROJECT_NAME}
 	src/main.cpp
@@ -36,4 +37,5 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC
 		star_knight_shaders
 		star_knight_window_and_user
 		star_knight_renderer
+		star_knight_models
 )

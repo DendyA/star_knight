@@ -5,6 +5,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "sk_mesh.h"
+
 #include "shader_manager.h"
 
 // TODO(DendyA): This should be put elsewhere and included in this class.
@@ -93,6 +95,34 @@ star_knight::ShaderManager::generateProgram(const std::string& vertexShaderName,
     success = true;
 
     return success;
+}
+
+void
+star_knight::ShaderManager::submitMesh(const bgfx::ViewId& viewId, const std::unique_ptr<SKMesh>& mesh, const bgfx::ProgramHandle& program, float* transfromMtx, uint64_t renderState)
+{
+    if (BGFX_STATE_MASK == renderState)
+    {
+        renderState = 0 |
+                BGFX_STATE_WRITE_RGB |
+                BGFX_STATE_WRITE_A |
+                BGFX_STATE_WRITE_Z |
+                BGFX_STATE_DEPTH_TEST_LESS |
+                BGFX_STATE_CULL_CCW |
+                BGFX_STATE_MSAA;
+    }
+
+    bgfx::setTransform(transfromMtx);
+    bgfx::setState(renderState);
+
+    for(const SKMeshInstance& instance : mesh->getInstances())
+    {
+        bgfx::setVertexBuffer(viewId, instance.m_vBuffHandle);
+        bgfx::setIndexBuffer(instance.m_iBuffHandle);
+
+        bgfx::submit(viewId, program, 0, BGFX_DISCARD_INDEX_BUFFER | BGFX_DISCARD_VERTEX_STREAMS);
+    }
+
+    bgfx::discard();
 }
 
 bgfx::VertexBufferHandle
