@@ -17,6 +17,9 @@ star_knight::TransformationManager::TransformationManager() :
     m_aspectRatio = STARTING_ASPECT_RATIO;
     m_nearPlane = STARTING_NEAR_PLANE;
     m_farPlane = STARTING_FAR_PLANE;
+
+    m_viewMatUpdated = false;
+    m_projMatUpdated = false;
 }
 
 star_knight::TransformationManager::~TransformationManager() = default;
@@ -39,12 +42,28 @@ star_knight::TransformationManager::setViewMatrix()
 
 // ViewId is just an uint16_t "under-the-hood".
 void
-star_knight::TransformationManager::updateViewTransform(bgfx::ViewId viewID)
+star_knight::TransformationManager::update(bgfx::ViewId viewID)
 {
-    setProjMatrix();
-    setViewMatrix();
+    bool updates = false;
 
-    bgfx::setViewTransform(viewID, m_viewMat, m_projMat);
+    if(m_projMatUpdated)
+    {
+        setProjMatrix();
+        m_projMatUpdated = false;
+        updates = true;
+    }
+
+    if(m_viewMatUpdated)
+    {
+        setViewMatrix();
+        m_viewMatUpdated = false;
+        updates = true;
+    }
+
+    if(updates)
+    {
+        bgfx::setViewTransform(viewID, m_viewMat, m_projMat);
+    }
 }
 
 void
@@ -52,7 +71,7 @@ star_knight::TransformationManager::view_translateX(float delta)
 {
     m_lookingAt.x += delta;
     m_eyePosition.x += delta;
-
+    m_viewMatUpdated = true;
 }
 
 void
@@ -60,6 +79,7 @@ star_knight::TransformationManager::view_translateY(float delta)
 {
     m_lookingAt.y += delta;
     m_eyePosition.y += delta;
+    m_viewMatUpdated = true;
 }
 
 void

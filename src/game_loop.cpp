@@ -173,7 +173,7 @@ star_knight::GameLoop::mainLoop()
             //  Related to issue #17.
             star_knight::ShaderManager::submitMesh(0, mesh, programHandle, mtx, 0xffffffffffffffffUL);
 
-            m_transformManager.updateViewTransform(0);
+            m_transformManager.update(0);
 
             bgfx::frame();
         }

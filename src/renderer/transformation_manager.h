@@ -19,8 +19,6 @@ namespace star_knight
      * The TransformationManager class is responsible for the initialization and updating of the matrices used for rendering.
      * The matrices in question being the projection, view, and transformation matrices. The workflow of using the class is to
      * call one of the transformation update functions to update the parameters or vectors of the projection or view matrix respectively.
-     * @todo Then the game loop will call the generic update function which will conditionally check if either matrix was updated, and then
-     * update the view transform.
      * @todo Need to add matrix "zero-ing" functions once the matrices have been sent to the bgfx system.
      */
     class TransformationManager final
@@ -37,16 +35,13 @@ namespace star_knight
              */
             ~TransformationManager();
 
-            /** updateViewTransform\n
-             * Updates the view transform, which takes both the view and projection matrix, and ties it to the
-             * given viewId.
-             * @todo This should conditionally check if either the view or projection matrix updated (by use of a member flag)
-             *  and then if it did, only then update the relevant matrix and update the view transform. This should be
-             *  updated to be a generic update function (through which any updates needed during game are performed) and then
-             *  be called from GameLoop's main loop.
+            /** update\n
+             * The generic update function. Updates the viewTransform, and view and projection matrices conditionally by checking both m_viewMatUpdated
+             * or m_projMatUpdated. If either of these are true, the corresponding matrix is updated and the viewTransform
+             * is also updated. This is called in the GameLoop's main loop function.
              * @param viewID The viewID to tie the view transform to.
              */
-            void updateViewTransform(bgfx::ViewId viewID);
+            void update(bgfx::ViewId viewID);
 
             /** view_translateX\n
              * Updates the eyePosition and lookingAt vector for the View matrix. Essentially, "moves" the camera
@@ -120,6 +115,9 @@ namespace star_knight
             bx::Vec3 m_eyePosition; // Point in space the camera is physically located.
             bx::Vec3 m_coordinateSysUp; // Initializer list has the default vector for mtxLookAt. Orienting the positive Y axis to be "up" {0, 1, 0}.
             float m_viewMat[16]{};
+
+            bool m_projMatUpdated;
+            bool m_viewMatUpdated;
 
             /** setProjMatrix\n
              * Creates a projection matrix out of the member parameters. The resulting projection matrix is saved in m_projMat.
