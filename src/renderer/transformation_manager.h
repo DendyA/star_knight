@@ -62,11 +62,50 @@ namespace star_knight
              */
             void view_translateY(float delta);
 
-            /** setTransformMatrix\n
-             * Updates the transform matrix and also gives the transform matrix to bgfx.
-             * @todo The transform matrix will be per model so this is just for the default plane being rendered. WILL need to be refactored.
+            /** transform_translateXYZ\n
+             * Generates a translation transformation matrix with the given deltas for each axis.
+             * @param mtx The pointer to save the generated translation transformation matrix to.
+             * @param deltaX The amount to translate in the X axis. Positive delta right, negative delta left. Zero to ignore the axis.
+             * @param deltaY The amount to translate in the Y axis. Positive delta up, negative delta down. Zero to ignore the axis.
+             * @param deltaZ The amount to translate in the Z axis. Positive delta away from near plane, negative delta towards near plane. Zero to ignore the axis.
              */
-            void setTransformMatrix();
+            static void transform_translateXYZ(float* mtx, float deltaX, float deltaY, float deltaZ);
+
+            /** transform_scaleXYZ\n
+             * Generates a scaling transformation matrix with the given deltas for each axis.
+             * @param mtx The pointer to save the generated scaling transformation matrix to.
+             * @param deltaX The amount to scale in the X axis. Positive delta increases size, negative delta decreases size. Zero to ignore axis.
+             * @param deltaY The amount to scale in the Y axis. Positive delta increases size, negative delta decreases size. Zero to ignore axis.
+             * @param deltaZ The amount to scale in the Z axis. Positive delta increases size, negative delta decreases size. Zero to ignore axis.
+             */
+            static void transform_scaleXYZ(float* mtx, float deltaX, float deltaY, float deltaZ);
+
+            /** transform_rotateX\n
+             * Generates a rotation transformation matrix with the given delta angle around the X axis.
+             * @warning Setting deltaTheta to 0 does not ignore the axis like in the scale or translate functions. Given that both sin and cos are used.
+             * Do not call this function if there is no intention to apply a rotation.
+             * @param mtx The pointer to save the generated rotation transformation matrix to.
+             * @param deltaTheta The amount to rotate around the X axis. Positive delta theta counter clockwise, negative delta theta clockwise.
+             */
+            static void transform_rotateX(float *mtx, float deltaTheta);
+
+            /** transform_rotateY\n
+             * Generates a rotation transformation matrix with the given delta angle around the X axis.
+             * @warning Setting deltaTheta to 0 does not ignore the axis like in the scale or translate functions. Given that both sin and cos are used.
+             * Do not call this function if there is no intention to apply a rotation.
+             * @param mtx The pointer to save the generated rotation transformation matrix to.
+             * @param deltaTheta The amount to rotate around the Y axis. Positive delta theta counter clockwise, negative delta theta clockwise.
+             */
+            static void transform_rotateY(float *mtx, float deltaTheta);
+
+            /** transform_rotateZ\n
+             * Generates a rotation transformation matrix with the given delta angle around the Z axis.
+             * @warning Setting deltaTheta to 0 does not ignore the axis like in the scale or translate functions. Given that both sin and cos are used.
+             * Do not call this function if there is no intention to apply a rotation.
+             * @param mtx The pointer to save the generated rotation transformation matrix to.
+             * @param deltaTheta The amount to rotate around the Z axis. Positive delta theta counter clockwise, negative delta theta clockwise.
+             */
+            static void transform_rotateZ(float *mtx, float deltaTheta);
 
         private:
             // Parameters related to the projection matrix.

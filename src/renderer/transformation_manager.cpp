@@ -63,17 +63,42 @@ star_knight::TransformationManager::view_translateY(float delta)
 }
 
 void
-star_knight::TransformationManager::setTransformMatrix()
+star_knight::TransformationManager::transform_translateXYZ(float* mtx, const float deltaX, const float deltaY, const float deltaZ)
 {
+    // The index ordering is 0 being top left and counting along the row. So top right index is 3.
+    // Bottom left corner index is 12 and bottom right index is 15. Assuming a 4x4 matrix.
+    mtx[0] = 1.0f;
+    mtx[3] = deltaX;
+    mtx[5] = 1.0f;
+    mtx[7] = deltaY;
+    mtx[10] = 1.0f;
+    mtx[11] = deltaZ;
+    mtx[15] = 1.0f;
+}
 
-    float mtx[16];
-    bx::mtxRotateY(mtx, 0.0f);
+void
+star_knight::TransformationManager::transform_scaleXYZ(float* mtx, const float deltaX, const float deltaY, const float deltaZ)
+{
+    mtx[0] = deltaX;
+    mtx[5] = deltaY;
+    mtx[10] = deltaZ;
+    mtx[15] = 1.0f;
+}
 
-    // position x,y,z
-    mtx[12] = 0.0f;
-    mtx[13] = 0.0f;
-    mtx[14] = 0.0f;
+void
+star_knight::TransformationManager::transform_rotateX(float* mtx, const float deltaTheta)
+{
+    bx::mtxRotateX(mtx, deltaTheta);
+}
 
-    // Set model matrix for rendering.
-    bgfx::setTransform(mtx);
+void
+star_knight::TransformationManager::transform_rotateY(float* mtx, const float deltaTheta)
+{
+    bx::mtxRotateZ(mtx, deltaTheta);
+}
+
+void
+star_knight::TransformationManager::transform_rotateZ(float* mtx, const float deltaTheta)
+{
+    bx::mtxRotateZ(mtx, deltaTheta);
 }
