@@ -19,7 +19,6 @@ namespace star_knight
      * The TransformationManager class is responsible for the initialization and updating of the matrices used for rendering.
      * The matrices in question being the projection, view, and transformation matrices. The workflow of using the class is to
      * call one of the transformation update functions to update the parameters or vectors of the projection or view matrix respectively.
-     * @todo Need to add matrix "zero-ing" functions once the matrices have been sent to the bgfx system.
      */
     class TransformationManager final
     {
@@ -103,6 +102,9 @@ namespace star_knight
             static void transform_rotateZ(float *mtx, float deltaTheta);
 
         private:
+            // TODO(DendyA): These are never updated after initial construction. Eventually, functions should be made to update
+            //  parameters such as the fov or the aspectRatio. m_projMatUpdated is currently not used for this reason.
+
             // Parameters related to the projection matrix.
             float m_fov;
             float m_aspectRatio;

@@ -19,7 +19,7 @@ star_knight::SKParser::openMeshFile(const std::string& filePath, std::unique_ptr
         return success;
     }
 
-    // Buffer of unsigned chars to holding the contents of the binary mesh file.
+    // Buffer of unsigned chars to hold the contents of the binary mesh file.
     std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(meshFile), {});
 
     // Creates a new dynamically allocated object on the heap.
