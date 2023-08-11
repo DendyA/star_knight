@@ -11,7 +11,8 @@
 #include "game_loop.h"
 
 star_knight::GameLoop::GameLoop() :
-    m_shaderManager()
+    m_shaderManager(),
+    m_transformManager()
 {
     m_errorCode = kNoErr;
     m_errorMessage = "";
@@ -132,8 +133,6 @@ star_knight::GameLoop::mainLoop()
 
         return gameLoopResult;
     }
-
-    m_transformManager = star_knight::TransformationManager();
 
     float mtx[16];
     bx::mtxRotateY(mtx, 0.0f);
