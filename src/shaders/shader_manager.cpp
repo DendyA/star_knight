@@ -9,6 +9,160 @@
 
 #include "shader_manager.h"
 
+star_knight::ShaderManager::ShaderManager() :
+    m_currentVertexShader("vs_simple.bin"),
+    m_currentFragmentShader("fs_simple.bin"),
+    m_currentShadersUpdated(true)
+{
+
+}
+
+star_knight::ShaderManager::~ShaderManager() = default;
+
+void
+star_knight::ShaderManager::destroyProgramHandle()
+{
+    // If the program handle is not correctly created, it will be set to kInvalidHandle.
+    if(m_errorCode == kNoErr)
+    {
+        bgfx::destroy(m_program);
+    }
+}
+
+star_knight::ShaderManager::SKShaderManagerErrCodes
+star_knight::ShaderManager::getErrorCode()
+{
+    return m_errorCode;
+}
+
+std::string
+star_knight::ShaderManager::getErrorMessage()
+{
+    return m_errorMessage;
+}
+
+std::string
+star_knight::ShaderManager::getCurrentVertexShader()
+{
+    return m_currentVertexShader;
+}
+
+void
+star_knight::ShaderManager::setCurrentVertexShader(std::string newVertexShader)
+{
+    m_currentVertexShader = newVertexShader;
+    m_currentShadersUpdated = true;
+}
+
+std::string
+star_knight::ShaderManager::getCurrentFragmentShader()
+{
+    return m_currentFragmentShader;
+}
+
+void
+star_knight::ShaderManager::setCurrentFragmentShader(std::string newFragmentShader)
+{
+    m_currentFragmentShader = newFragmentShader;
+    m_currentShadersUpdated = true;
+}
+
+void
+star_knight::ShaderManager::update(const bgfx::ViewId& viewId, const std::unique_ptr<SKMesh>& mesh, float* transfromMtx, uint64_t renderState)
+{
+    if(m_currentShadersUpdated)
+    {
+        bool programGenerationStatus = generateProgram();
+        m_currentShadersUpdated = false;
+
+        if(!programGenerationStatus)
+        {
+            return;
+        }
+    }
+
+    submitMesh(viewId, mesh, transfromMtx, renderState);
+}
+
+bool
+star_knight::ShaderManager::generateProgram()
+{
+    bgfx::ShaderHandle vertexShaderHandle{};
+    bgfx::ShaderHandle fragmentShaderHandle{};
+    bool success;
+
+    success = loadShader(m_currentVertexShader, kVertexShader, vertexShaderHandle);
+    if(!success)
+    {
+        const std::string errorMsg = "ShaderManager: Error loading vertex shader.";
+        saveError(errorMsg, kProgramGenerationErr);
+
+        return success;
+    }
+
+    success = loadShader(m_currentFragmentShader, kFragmentShader, fragmentShaderHandle);
+    if(!success)
+    {
+        const std::string errorMsg = "ShaderManager: Error loading fragment shader.";
+        saveError(errorMsg, kProgramGenerationErr);
+
+        return success;
+    }
+
+    m_program = bgfx::createProgram(vertexShaderHandle, fragmentShaderHandle, true);
+
+    bgfx::destroy(vertexShaderHandle);
+    bgfx::destroy(fragmentShaderHandle);
+
+    success = true;
+
+    saveError("", kNoErr);
+
+    return success;
+}
+
+// TODO(DendyA): is the bool necessary? I don't capture it in the update() function which is really the only place this would be called?
+bool
+star_knight::ShaderManager::submitMesh(const bgfx::ViewId& viewId, const std::unique_ptr<SKMesh>& mesh, float* transfromMtx, uint64_t renderState)
+{
+    bool success = false;
+
+    if(m_errorCode == kProgramGenerationErr)
+    {
+        const std::string errorMsg = "ShaderManager: Trying to submit mesh with invalid program handle. Not submitting.";
+        saveError(errorMsg, ksubmitMeshErr);
+
+        return success;
+    }
+
+    if (BGFX_STATE_MASK == renderState)
+    {
+        renderState = 0 |
+                BGFX_STATE_WRITE_RGB |
+                BGFX_STATE_WRITE_A |
+                BGFX_STATE_WRITE_Z |
+                BGFX_STATE_DEPTH_TEST_LESS |
+                BGFX_STATE_CULL_CCW |
+                BGFX_STATE_MSAA;
+    }
+
+    bgfx::setTransform(transfromMtx);
+    bgfx::setState(renderState);
+
+    for(const SKMeshInstance& instance : mesh->getInstances())
+    {
+        bgfx::setVertexBuffer(viewId, instance.m_vBuffHandle);
+        bgfx::setIndexBuffer(instance.m_iBuffHandle);
+
+        bgfx::submit(viewId, m_program, 0, BGFX_DISCARD_INDEX_BUFFER | BGFX_DISCARD_VERTEX_STREAMS);
+    }
+
+    bgfx::discard();
+    success = true;
+
+    return success;
+}
+
 bool
 star_knight::ShaderManager::loadShader(const std::string& shaderName, ShaderManagerShaderTypes typeIndex, bgfx::ShaderHandle& handle)
 {
@@ -43,61 +197,9 @@ star_knight::ShaderManager::loadShader(const std::string& shaderName, ShaderMana
     return success;
 }
 
-bool
-star_knight::ShaderManager::generateProgram(const std::string& vertexShaderName, const std::string& fragmentShaderName, bgfx::ProgramHandle& program)
-{
-    bgfx::ShaderHandle vertexShaderHandle{};
-    bgfx::ShaderHandle fragmentShaderHandle{};
-    bool success;
-
-    success = loadShader(vertexShaderName, kVertexShader, vertexShaderHandle);
-    if(!success)
-    {
-        std::cerr << "ShaderManager: Error loading vertex shader." << std::endl;
-        return success;
-    }
-
-    success = loadShader(fragmentShaderName, kFragmentShader, fragmentShaderHandle);
-    if(!success)
-    {
-        std::cerr << "ShaderManager: Error loading fragment shader." << std::endl;
-        return success;
-    }
-
-    program = bgfx::createProgram(vertexShaderHandle, fragmentShaderHandle, true);
-
-    bgfx::destroy(vertexShaderHandle);
-    bgfx::destroy(fragmentShaderHandle);
-
-    success = true;
-
-    return success;
-}
-
 void
-star_knight::ShaderManager::submitMesh(const bgfx::ViewId& viewId, const std::unique_ptr<SKMesh>& mesh, const bgfx::ProgramHandle& program, float* transfromMtx, uint64_t renderState)
+star_knight::ShaderManager::saveError(const std::string &errorMessage, SKShaderManagerErrCodes errorCode)
 {
-    if (BGFX_STATE_MASK == renderState)
-    {
-        renderState = 0 |
-                BGFX_STATE_WRITE_RGB |
-                BGFX_STATE_WRITE_A |
-                BGFX_STATE_WRITE_Z |
-                BGFX_STATE_DEPTH_TEST_LESS |
-                BGFX_STATE_CULL_CCW |
-                BGFX_STATE_MSAA;
-    }
-
-    bgfx::setTransform(transfromMtx);
-    bgfx::setState(renderState);
-
-    for(const SKMeshInstance& instance : mesh->getInstances())
-    {
-        bgfx::setVertexBuffer(viewId, instance.m_vBuffHandle);
-        bgfx::setIndexBuffer(instance.m_iBuffHandle);
-
-        bgfx::submit(viewId, program, 0, BGFX_DISCARD_INDEX_BUFFER | BGFX_DISCARD_VERTEX_STREAMS);
-    }
-
-    bgfx::discard();
+    m_errorMessage = errorMessage;
+    m_errorCode = errorCode;
 }

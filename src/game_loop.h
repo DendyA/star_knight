@@ -9,6 +9,7 @@
 #include "window_and_user/sk_window.h"
 #include "renderer/initializer.h"
 #include "renderer/transformation_manager.h"
+#include "shaders/shader_manager.h"
 
 namespace star_knight
 {
@@ -28,7 +29,7 @@ namespace star_knight
                 kSDLGameObjectsInitErr,
                 kbgfxGameObjectsInitErr,
                 kOpenMeshFileErr,
-                kShaderManagerProgramGenerateErr
+                kShaderManagerUpdateErr
             };
 
             /** Constructor\n
@@ -70,6 +71,7 @@ namespace star_knight
             star_knight::SKWindow m_skWindow;
             star_knight::Initializer m_bgfxInitializer;
             star_knight::TransformationManager m_transformManager;
+            star_knight::ShaderManager m_shaderManager;
 
             /** initializeSDLGameObjects\n
              * Initializes all of the SDL game objects required for running the main game loop.
