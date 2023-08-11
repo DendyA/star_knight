@@ -12,14 +12,16 @@ star_knight::TransformationManager::TransformationManager() :
     m_lookingAt(0.0f, 0.0f, 0.0f),
     m_eyePosition(0.0f, 0.0f, 10.0f)
 {
-//      Setting projection matrix parameters. This won't change very frequently, so the projection matrix will be able to be pre-computed.
+//  Setting projection matrix parameters. This won't change very frequently, so the projection matrix will be able to be pre-computed.
     m_fov = STARTING_FOV;
     m_aspectRatio = STARTING_ASPECT_RATIO;
     m_nearPlane = STARTING_NEAR_PLANE;
     m_farPlane = STARTING_FAR_PLANE;
 
-    m_viewMatUpdated = false;
-    m_projMatUpdated = false;
+//  These MUST be set initially to true since the update() function will only set these matrices if these are true.
+//  Meaning that these need to be initially true.
+    m_viewMatUpdated = true;
+    m_projMatUpdated = true;
 }
 
 star_knight::TransformationManager::~TransformationManager() = default;
