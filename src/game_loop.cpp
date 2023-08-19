@@ -3,13 +3,16 @@
 
 #include <iostream>
 
-#include "bgfx.h"
+#include "bgfx/bgfx.h"
 
-#include "shaders/shader_manager.h"
+#include "models/sk_parser.h"
+#include "models/sk_mesh.h"
 
 #include "game_loop.h"
 
-star_knight::GameLoop::GameLoop()
+star_knight::GameLoop::GameLoop() :
+    m_shaderManager(),
+    m_transformManager()
 {
     m_errorCode = kNoErr;
     m_errorMessage = "";
@@ -20,6 +23,10 @@ star_knight::GameLoop::GameLoop()
 
 star_knight::GameLoop::~GameLoop()
 {
+    // This MUST be called rather than waiting for m_shaderManager's destructor to be called since the destructor is called
+    // after the call to destroybgfx(). Meaning that the program handle is left dangling and bgfx will report a memory leak.
+    m_shaderManager.destroyProgramHandle();
+
     // When destroying GameLoop, we only want to call destorybgfx if the bgfxInitializer initialized properly because otherwise a fatal error occurs.
     // These two error codes are the only ones that could be thrown before bgfx would initialize. Meaning as long as
     // it isn't reporting these two error codes, then bgfx is safe to destroy.
@@ -113,28 +120,27 @@ star_knight::GameLoop::handleKeyDownEvent(SDL_Event keyDownEvent)
 star_knight::GameLoop::SKGameLoopErrCodes
 star_knight::GameLoop::mainLoop()
 {
+    star_knight::GameLoop::SKGameLoopErrCodes gameLoopResult = kNoErr;
 
-    bgfx::VertexBufferHandle vertexBufferHandle = star_knight::ShaderManager::initVertexBuffer();
-    bgfx::IndexBufferHandle indexBufferHandle = star_knight::ShaderManager::initIndexBuffer();
+    std::unique_ptr<SKMesh> mesh = std::unique_ptr<SKMesh>(nullptr);
 
-    bgfx::ProgramHandle programHandle{};
+    bool openMeshStatus = star_knight::SKParser::openMeshFile("../lib/bgfx_cmake/bgfx/examples/runtime/meshes/bunny.bin", mesh);
 
-    bool generateProgramStatus = star_knight::ShaderManager::generateProgram("vs_simple.bin","fs_simple.bin", programHandle);
-
-    if(!generateProgramStatus)
+    if(!openMeshStatus)
     {
-        saveError("GameLoop: Error while trying to generate shader program\n", kShaderManagerProgramGenerateErr);
+        saveError("GameLoop: Error while trying to open mesh file\n", kOpenMeshFileErr);
+        gameLoopResult = kOpenMeshFileErr;
 
-        // TODO(DendyA): If possible, make these handles member variables in this class and then these can be destroyed from the destructor.
-        bgfx::destroy(vertexBufferHandle);
-        bgfx::destroy(indexBufferHandle);
-
-        return kShaderManagerProgramGenerateErr;
+        return gameLoopResult;
     }
 
-    m_transformManager = star_knight::TransformationManager();
+    float mtx[16];
+    bx::mtxRotateY(mtx, 0.0f);
 
-    m_transformManager.setTransformMatrix();
+    // position x,y,z
+    mtx[12] = 0.0f;
+    mtx[13] = 0.0f;
+    mtx[14] = 0.0f;
 
     SDL_Event currEvent;
     bool quit = false;
@@ -155,29 +161,29 @@ star_knight::GameLoop::mainLoop()
                     break;
             }
 
-            // Set vertex and index buffer.
-            bgfx::setVertexBuffer(0, vertexBufferHandle);
-            bgfx::setIndexBuffer(indexBufferHandle);
-
-            // Set render states.
-            bgfx::setState(BGFX_STATE_DEFAULT);
-
-            // Submit primitive for rendering to view 0.
+            // Submit mesh for rendering to view 0.
             // FIXME(DendyA): When this is put into the main game loop, this causes a delay in closing the game window.
             //  Related to issue #17.
-            bgfx::submit(0, programHandle);
+            m_shaderManager.update(0, mesh, mtx, 0xffffffffffffffffUL);
 
-            m_transformManager.updateViewTransform(0);
+            if(m_shaderManager.getErrorCode() != star_knight::ShaderManager::kNoErr)
+            {
+                saveError("GameLoop: Error while trying to update ShaderManager\n", kShaderManagerUpdateErr);
+                quit = true;
+                gameLoopResult = kShaderManagerUpdateErr;
+
+                continue;
+            }
+
+            m_transformManager.update(0);
 
             bgfx::frame();
         }
     }
 
-    bgfx::destroy(vertexBufferHandle);
-    bgfx::destroy(indexBufferHandle);
-    bgfx::destroy(programHandle);
+    mesh->destroyHandles();
 
-    return kNoErr;
+    return gameLoopResult;
 }
 
 void

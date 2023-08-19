@@ -26,8 +26,16 @@ ADD_LIBRARY(${PROJECT_NAME}
     ${sk_shader_lib_headers}
 )
 
+# TODO(DendyA): This will need to be not set for release builds in the future.
+TARGET_COMPILE_DEFINITIONS(${PROJECT_NAME} PUBLIC
+        BX_CONFIG_DEBUG
+)
+
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
-    ${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bgfx/include/bgfx/
+    ${CMAKE_SOURCE_DIR}/src/models/
+
+    ${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bx/include/
+    ${CMAKE_SOURCE_DIR}/lib/bgfx_cmake/bgfx/include/
 )
 
 # Add the two custom targets for compiling the shaders.

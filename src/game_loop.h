@@ -9,6 +9,7 @@
 #include "window_and_user/sk_window.h"
 #include "renderer/initializer.h"
 #include "renderer/transformation_manager.h"
+#include "shaders/shader_manager.h"
 
 namespace star_knight
 {
@@ -27,7 +28,8 @@ namespace star_knight
                 kNoErr = 0,
                 kSDLGameObjectsInitErr,
                 kbgfxGameObjectsInitErr,
-                kShaderManagerProgramGenerateErr
+                kOpenMeshFileErr,
+                kShaderManagerUpdateErr
             };
 
             /** Constructor\n
@@ -57,6 +59,7 @@ namespace star_knight
 
             /** mainLoop\n
              * This is the main loop which is responsible for everything from initialization, destruction and running of the game engine.
+             * @note This function is not called update() but is synonymous with the GameLoop's update() function.
              * @return Ending status of the main game loop. 0 for success, non-zero error code for failure.
              */
             SKGameLoopErrCodes mainLoop();
@@ -68,6 +71,7 @@ namespace star_knight
             star_knight::SKWindow m_skWindow;
             star_knight::Initializer m_bgfxInitializer;
             star_knight::TransformationManager m_transformManager;
+            star_knight::ShaderManager m_shaderManager;
 
             /** initializeSDLGameObjects\n
              * Initializes all of the SDL game objects required for running the main game loop.

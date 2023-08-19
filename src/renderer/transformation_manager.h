@@ -19,9 +19,6 @@ namespace star_knight
      * The TransformationManager class is responsible for the initialization and updating of the matrices used for rendering.
      * The matrices in question being the projection, view, and transformation matrices. The workflow of using the class is to
      * call one of the transformation update functions to update the parameters or vectors of the projection or view matrix respectively.
-     * @todo Then the game loop will call the generic update function which will conditionally check if either matrix was updated, and then
-     * update the view transform.
-     * @todo Need to add matrix "zero-ing" functions once the matrices have been sent to the bgfx system.
      */
     class TransformationManager final
     {
@@ -37,16 +34,13 @@ namespace star_knight
              */
             ~TransformationManager();
 
-            /** updateViewTransform\n
-             * Updates the view transform, which takes both the view and projection matrix, and ties it to the
-             * given viewId.
-             * @todo This should conditionally check if either the view or projection matrix updated (by use of a member flag)
-             *  and then if it did, only then update the relevant matrix and update the view transform. This should be
-             *  updated to be a generic update function (through which any updates needed during game are performed) and then
-             *  be called from GameLoop's main loop.
+            /** update\n
+             * The generic update function. Updates the viewTransform, and view and projection matrices conditionally by checking both m_viewMatUpdated
+             * or m_projMatUpdated. If either of these are true, the corresponding matrix is updated and the viewTransform
+             * is also updated. This is called in the GameLoop's main loop function.
              * @param viewID The viewID to tie the view transform to.
              */
-            void updateViewTransform(bgfx::ViewId viewID);
+            void update(bgfx::ViewId viewID);
 
             /** view_translateX\n
              * Updates the eyePosition and lookingAt vector for the View matrix. Essentially, "moves" the camera
@@ -62,13 +56,55 @@ namespace star_knight
              */
             void view_translateY(float delta);
 
-            /** setTransformMatrix\n
-             * Updates the transform matrix and also gives the transform matrix to bgfx.
-             * @todo The transform matrix will be per model so this is just for the default plane being rendered. WILL need to be refactored.
+            /** transform_translateXYZ\n
+             * Generates a translation transformation matrix with the given deltas for each axis.
+             * @param mtx The pointer to save the generated translation transformation matrix to.
+             * @param deltaX The amount to translate in the X axis. Positive delta right, negative delta left. Zero to ignore the axis.
+             * @param deltaY The amount to translate in the Y axis. Positive delta up, negative delta down. Zero to ignore the axis.
+             * @param deltaZ The amount to translate in the Z axis. Positive delta away from near plane, negative delta towards near plane. Zero to ignore the axis.
              */
-            void setTransformMatrix();
+            static void transform_translateXYZ(float* mtx, float deltaX, float deltaY, float deltaZ);
+
+            /** transform_scaleXYZ\n
+             * Generates a scaling transformation matrix with the given deltas for each axis.
+             * @param mtx The pointer to save the generated scaling transformation matrix to.
+             * @param deltaX The amount to scale in the X axis. Positive delta increases size, negative delta decreases size. Zero to ignore axis.
+             * @param deltaY The amount to scale in the Y axis. Positive delta increases size, negative delta decreases size. Zero to ignore axis.
+             * @param deltaZ The amount to scale in the Z axis. Positive delta increases size, negative delta decreases size. Zero to ignore axis.
+             */
+            static void transform_scaleXYZ(float* mtx, float deltaX, float deltaY, float deltaZ);
+
+            /** transform_rotateX\n
+             * Generates a rotation transformation matrix with the given delta angle around the X axis.
+             * @warning Setting deltaTheta to 0 does not ignore the axis like in the scale or translate functions. Given that both sin and cos are used.
+             * Do not call this function if there is no intention to apply a rotation.
+             * @param mtx The pointer to save the generated rotation transformation matrix to.
+             * @param deltaTheta The amount to rotate around the X axis. Positive delta theta counter clockwise, negative delta theta clockwise.
+             */
+            static void transform_rotateX(float *mtx, float deltaTheta);
+
+            /** transform_rotateY\n
+             * Generates a rotation transformation matrix with the given delta angle around the X axis.
+             * @warning Setting deltaTheta to 0 does not ignore the axis like in the scale or translate functions. Given that both sin and cos are used.
+             * Do not call this function if there is no intention to apply a rotation.
+             * @param mtx The pointer to save the generated rotation transformation matrix to.
+             * @param deltaTheta The amount to rotate around the Y axis. Positive delta theta counter clockwise, negative delta theta clockwise.
+             */
+            static void transform_rotateY(float *mtx, float deltaTheta);
+
+            /** transform_rotateZ\n
+             * Generates a rotation transformation matrix with the given delta angle around the Z axis.
+             * @warning Setting deltaTheta to 0 does not ignore the axis like in the scale or translate functions. Given that both sin and cos are used.
+             * Do not call this function if there is no intention to apply a rotation.
+             * @param mtx The pointer to save the generated rotation transformation matrix to.
+             * @param deltaTheta The amount to rotate around the Z axis. Positive delta theta counter clockwise, negative delta theta clockwise.
+             */
+            static void transform_rotateZ(float *mtx, float deltaTheta);
 
         private:
+            // TODO(DendyA): These are never updated after initial construction. Eventually, functions should be made to update
+            //  parameters such as the fov or the aspectRatio. m_projMatUpdated is currently not used for this reason.
+
             // Parameters related to the projection matrix.
             float m_fov;
             float m_aspectRatio;
@@ -81,6 +117,9 @@ namespace star_knight
             bx::Vec3 m_eyePosition; // Point in space the camera is physically located.
             bx::Vec3 m_coordinateSysUp; // Initializer list has the default vector for mtxLookAt. Orienting the positive Y axis to be "up" {0, 1, 0}.
             float m_viewMat[16]{};
+
+            bool m_projMatUpdated;
+            bool m_viewMatUpdated;
 
             /** setProjMatrix\n
              * Creates a projection matrix out of the member parameters. The resulting projection matrix is saved in m_projMat.
